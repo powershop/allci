@@ -8,7 +8,7 @@ RSpec.describe ProcessGitLabPushEvent do
   "object_kind": "push",
   "before": "95790bf891e76fee5e1747ab589903a6a1f80f22",
   "after": "da1560886d4f094c3e6c9ef40349f7d38b5d27d7",
-  "ref": "refs/heads/master",
+  "ref": "refs/heads/mytopic",
   "checkout_sha": "da1560886d4f094c3e6c9ef40349f7d38b5d27d7",
   "user_id": 4,
   "user_name": "John Smith",
@@ -74,6 +74,8 @@ END
   end
   let(:repository_uri) { "git@example.com:mike/diaspora.git" }
   let(:repository_name) { "Diaspora Example" }
+  let(:pushed_branch) { "mytopic" }
+  let(:pushed_commit) { "da1560886d4f094c3e6c9ef40349f7d38b5d27d7" }
 
   it_behaves_like "git push event service"
 end

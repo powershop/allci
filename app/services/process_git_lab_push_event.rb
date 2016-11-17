@@ -14,4 +14,12 @@ class ProcessGitLabPushEvent < ProcessGitPushEvent
   def default_name
     json["repository"]["name"] if json["repository"]
   end
+
+  def branch
+    json["ref"]
+  end
+
+  def head_commit
+    json["after"]
+  end
 end

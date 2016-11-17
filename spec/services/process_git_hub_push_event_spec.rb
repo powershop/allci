@@ -5,7 +5,7 @@ RSpec.describe ProcessGitHubPushEvent do
   let(:post_data) do
     <<END
 {
-  "ref": "refs/heads/changes",
+  "ref": "refs/heads/mytopic",
   "before": "9049f1265b7d61be4a8904a9a27120d2064dab3b",
   "after": "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c",
   "created": false,
@@ -171,6 +171,8 @@ END
   end
   let(:repository_uri) { "git@github.com:baxterthehacker/public-repo.git" }
   let(:repository_name) { "public-repo example" }
+  let(:pushed_branch) { "mytopic" }
+  let(:pushed_commit) { "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c" }
 
   it_behaves_like "git push event service"
 end
