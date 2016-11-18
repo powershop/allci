@@ -1,13 +1,13 @@
 class AssignTask
-  def initialize(build_id:, stage:, runner_id:)
+  def initialize(build_id:, stage:, runner_name:)
     @build_id =  build_id
     @stage = stage
-    @runner_id = runner_id
+    @runner_name = runner_name
   end
 
   def call
     BuildTask.transaction do
-      task = available_build_tasks.lock.take
+      task = task_to_retry || available_build_tasks.lock.take
       if task
         task.update!(state: "running")
         task.build_task_runs.create!(runner: runner, started_at: Time.now)
@@ -16,8 +16,8 @@ class AssignTask
     end
   end
 
-  def available_build_tasks
-    scope = BuildTask.queued.for_stage(@stage)
+  def build_tasks
+    scope = BuildTask.for_stage(@stage)
 
     case @build_id
     when nil
@@ -27,8 +27,18 @@ class AssignTask
     end
   end
 
+  def task_to_retry
+    build_tasks.running.joins(:running_task_run).merge(BuildTaskRun.running_on(@runner_name)).take.tap do |task|
+      task.running_task_run.update!(state: "aborted", finished_at: Time.now) if task
+    end
+  end
+
+  def available_build_tasks
+    build_tasks.queued
+  end
+
   def runner
-    Runner.find_by_name(@runner_id) || Runner.create!(name: @runner_id)
+    Runner.find_by_name(@runner_name) || Runner.create!(name: @runner_name)
   rescue ActiveRecord::RecordNotUnique
     retry
   end
