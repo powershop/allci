@@ -10,17 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161117091152) do
+ActiveRecord::Schema.define(version: 20161118011005) do
+
+  create_table "build_task_runs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "build_task_id",                      null: false
+    t.string   "state",         default: "assigned", null: false
+    t.integer  "runner_id",                          null: false
+    t.datetime "started_at",                         null: false
+    t.datetime "finished_at"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.index ["build_task_id", "state"], name: "index_build_task_runs_by_build_task", using: :btree
+  end
 
   create_table "build_tasks", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "configuration_build_id",                                       null: false
-    t.string   "state",                                     default: "queued", null: false
-    t.string   "stage",                                                        null: false
+    t.integer  "configuration_build_id",                    null: false
+    t.string   "state",                  default: "queued", null: false
+    t.string   "stage",                                     null: false
     t.string   "task"
-    t.integer  "[:configuration_build_id, :stage, :state]"
-    t.string   "[:state, :task]"
-    t.datetime "created_at",                                                   null: false
-    t.datetime "updated_at",                                                   null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.index ["configuration_build_id", "stage", "state"], name: "index_tasks_by_build", using: :btree
+    t.index ["state", "task"], name: "index_tasks_by_state", using: :btree
   end
 
   create_table "component_variables", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -78,6 +89,13 @@ ActiveRecord::Schema.define(version: 20161117091152) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["uri"], name: "index_repositories_on_uri", unique: true, using: :btree
+  end
+
+  create_table "runners", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_runners_on_name", unique: true, using: :btree
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

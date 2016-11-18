@@ -1,4 +1,6 @@
 class WebhooksController < ApplicationController
+  skip_before_action :verify_authenticity_token
+
   def github
     if request.headers['X-GitHub-Event'] == 'push'
       ProcessGitHubPushEvent.new(request.body.read).call

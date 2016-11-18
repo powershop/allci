@@ -14,6 +14,8 @@ RSpec.describe WebhooksController, type: :controller do
         expect(instance).to receive(:call)
 
         post :github
+
+        expect(response).to be_success
       end
     end
 
@@ -27,6 +29,8 @@ RSpec.describe WebhooksController, type: :controller do
         expect(ProcessGitHubPushEvent).not_to receive(:new)
 
         post :github
+
+        expect(response).to be_success
       end
     end
   end
@@ -44,6 +48,8 @@ RSpec.describe WebhooksController, type: :controller do
         expect(instance).to receive(:call)
 
         post :gitlab
+
+        expect(response).to be_success
       end
     end
 
@@ -57,6 +63,8 @@ RSpec.describe WebhooksController, type: :controller do
         expect(ProcessGitLabPushEvent).not_to receive(:new)
 
         post :gitlab
+
+        expect(response).to be_success
       end
     end
   end

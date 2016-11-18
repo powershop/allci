@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
-  get '/webhooks/github' => 'webhooks#github'
-  get '/webhooks/gitlab' => 'webhooks#gitlab'
+  post '/webhooks/github' => 'webhooks#github'
+  post '/webhooks/gitlab' => 'webhooks#gitlab'
+
+  post '/tasks/pull' => 'tasks#pull'
 end
