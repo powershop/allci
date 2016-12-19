@@ -18,7 +18,7 @@ class AssignTask
 
   def build_tasks
     if @build_id.nil? && @stage.nil?
-      BuildTask.joins(:configuration_build => :configuration).merge(Configuration.in_build_priority_order)
+      BuildTask.joins(:configuration_build => :configuration).merge(ConfigurationBuild.available).merge(Configuration.in_build_priority_order)
     else
       BuildTask.for_build(@build_id).for_stage(@stage)
     end

@@ -57,12 +57,12 @@ ActiveRecord::Schema.define(version: 20161118011005) do
   end
 
   create_table "configuration_builds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "configuration_id",                              null: false
-    t.string   "state",                      default: "queued", null: false
+    t.integer  "configuration_id",                                 null: false
+    t.string   "state",                      default: "available", null: false
     t.integer  "triggered_by_repository_id"
     t.string   "triggered_by_commit"
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
     t.index ["configuration_id", "state"], name: "index_configuration_builds_by_configuration", using: :btree
     t.index ["state"], name: "index_configuration_builds_by_state", using: :btree
   end
