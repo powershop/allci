@@ -15,7 +15,7 @@ RSpec.describe AssignTask do
     let(:task) { build.build_tasks.take }
 
     before do
-      expect(task.state).to eq("queued")
+      expect(task.state).to eq("available")
     end
 
     it "assigns tasks created by the EnqueueConfigurationBuild service" do
@@ -23,6 +23,7 @@ RSpec.describe AssignTask do
 
       task.reload
       expect(task.state).to eq("running")
+      expect(task.workers_to_run).to eq(0)
       expect(task.build_task_runs.size).to eq(1)
       expect(task.build_task_runs.first.state).to eq("running")
       expect(task.build_task_runs.first.started_at).not_to be_blank
@@ -38,6 +39,7 @@ RSpec.describe AssignTask do
 
       task.reload
       expect(task.state).to eq("running")
+      expect(task.workers_to_run).to eq(0)
       expect(task.build_task_runs.size).to eq(2)
       expect(task.build_task_runs.first.state).to eq("aborted")
       expect(task.build_task_runs.first.started_at).not_to be_blank

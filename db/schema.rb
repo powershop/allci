@@ -25,14 +25,15 @@ ActiveRecord::Schema.define(version: 20161118011005) do
   end
 
   create_table "build_tasks", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "configuration_build_id",                    null: false
-    t.string   "state",                  default: "queued", null: false
-    t.string   "stage",                                     null: false
+    t.integer  "configuration_build_id",                       null: false
+    t.string   "state",                  default: "available", null: false
+    t.integer  "workers_to_run",                               null: false
+    t.string   "stage",                                        null: false
     t.string   "task"
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.index ["configuration_build_id", "stage", "state"], name: "index_tasks_by_build", using: :btree
-    t.index ["state", "task"], name: "index_tasks_by_state", using: :btree
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
+    t.index ["configuration_build_id", "state", "stage"], name: "index_tasks_by_build", using: :btree
+    t.index ["state"], name: "index_tasks_by_state", using: :btree
   end
 
   create_table "component_variables", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

@@ -3,7 +3,7 @@ class BuildTask < ApplicationRecord
   has_many :build_task_runs
   has_one :running_task_run, -> { running }, class_name: 'BuildTaskRun'
 
-  scope :queued, -> { where(state: "queued") }
+  scope :available, -> { where(state: "available") }
   scope :running, -> { where(state: "running") }
 
   scope :for_stage, -> (stage) { where(stage: stage) }
