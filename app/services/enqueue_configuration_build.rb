@@ -8,7 +8,7 @@ class EnqueueConfigurationBuild
   def call(trigger_params)
     configuration.transaction do
       build = configuration.configuration_builds.create!(trigger_params)
-      build.build_tasks.create!(stage: 'build_component_images')
+      build.build_tasks.create!(stage: 'bootstrap')
       build
     end
   end

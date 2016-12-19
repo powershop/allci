@@ -17,13 +17,10 @@ class AssignTask
   end
 
   def build_tasks
-    scope = BuildTask.for_stage(@stage)
-
-    case @build_id
-    when nil
-      scope.joins(:configuration_build => :configuration).merge(Configuration.in_build_priority_order)
+    if @build_id.nil? && @stage.nil?
+      BuildTask.joins(:configuration_build => :configuration).merge(Configuration.in_build_priority_order)
     else
-      scope.for_build(@build_id)
+      BuildTask.for_build(@build_id).for_stage(@stage)
     end
   end
 
