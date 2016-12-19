@@ -48,12 +48,13 @@ ActiveRecord::Schema.define(version: 20161118011005) do
     t.integer  "configuration_id",                        null: false
     t.integer  "repository_id",                           null: false
     t.string   "branch",           default: "master",     null: false
+    t.boolean  "triggers_builds",  default: true,         null: false
     t.string   "dockerfile",       default: "Dockerfile", null: false
     t.string   "container_name",                          null: false
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
     t.index ["configuration_id", "container_name"], name: "index_configuration_components_by_name", unique: true, using: :btree
-    t.index ["configuration_id", "repository_id", "branch"], name: "index_configuration_components_by_repository", using: :btree
+    t.index ["configuration_id", "repository_id", "branch", "triggers_builds"], name: "index_configuration_components_by_repository", using: :btree
   end
 
   create_table "configuration_builds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

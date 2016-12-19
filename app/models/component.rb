@@ -9,6 +9,7 @@ class Component < ApplicationRecord
   validates_uniqueness_of :container_name, scope: :configuration
 
   scope :for_branch, -> (branch_name) { where(branch: branch_name.sub(/^refs\/\w+\//, '')) }
+  scope :triggers_builds, -> { where(triggers_builds: true) }
 
 protected
   def set_default_container_name

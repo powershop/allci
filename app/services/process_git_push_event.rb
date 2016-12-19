@@ -3,7 +3,7 @@ class ProcessGitPushEvent
     return unless uri.present?
 
     Repository.transaction do
-      repository.configurations.merge(Component.for_branch(branch)).build_by_default.in_build_priority_order.each do |configuration|
+      repository.configurations.merge(Component.for_branch(branch).triggers_builds).build_by_default.in_build_priority_order.each do |configuration|
         EnqueueConfigurationBuild.new(configuration).call(triggered_by_repository: repository, triggered_by_commit: head_commit)
       end
     end

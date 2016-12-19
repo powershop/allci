@@ -56,5 +56,14 @@ shared_examples_for "git push event service" do
 
       expect(configuration1b.configuration_builds).to be_empty
     end
+
+    it "doesn't queue a build for components that don't trigger builds" do
+      configuration1b.components.where(repository: main_repository).take.update!(triggers_builds: false)
+
+      service.call
+
+      expect(configuration1b.configuration_builds).to be_empty
+      expect(configuration2a.configuration_builds).to_not be_empty
+    end
   end
 end
