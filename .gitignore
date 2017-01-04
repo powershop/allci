@@ -13,6 +13,8 @@
 !/log/.keep
 !/tmp/.keep
 
+/builds
+
 # Ignore Byebug command history file.
 .byebug_history
 spec/examples.txt
