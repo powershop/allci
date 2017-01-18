@@ -8,12 +8,22 @@ class BuildTask < ApplicationRecord
 
   scope :for_stage, -> (stage) { where(stage: stage) }
 
-  def as_json(options)
+  def as_json(options = nil)
     {
       task_id: id,
       stage: stage,
       task: task,
-      components: configuration_build.configuration.components.as_json(except: [:created_at, :updated_at]),
+      workers_to_run: workers_to_run,
+      configuration_name: configuration_build.configuration.name,
+      components: configuration_build.configuration.components.order(:container_name).each_with_object({}) { |component, results|
+        results[component.container_name] = {
+          repository_name: component.repository.name,
+          repository_uri: component.repository.uri,
+          branch: component.branch,
+          dockerfile: component.dockerfile,
+          image_name: configuration_build.image_name_for(component),
+        }
+      }
     }
   end
 end
