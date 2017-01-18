@@ -19,7 +19,7 @@ class EnqueueConfigurationBuild
         repo = component.repository
 
         get_code(repo)
-        build_docker_image(repo)
+        build_docker_image(repo, @build.image_name_for(component))
       end
 
       #build.build_tasks.create!(stage: "bootstrap", workers_to_run: 1)
@@ -29,8 +29,8 @@ class EnqueueConfigurationBuild
 
   private
 
-  def build_docker_image(repo)
-    Docker::Image.build_from_dir(deploy_repo_path + "/#{repo.name}")
+  def build_docker_image(repo, name)
+    Docker::Image.build_from_dir(deploy_repo_path + "/#{repo.name}", {'t' => name})
   end
 
   def get_code(repo)
