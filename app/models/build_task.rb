@@ -1,12 +1,16 @@
 class BuildTask < ApplicationRecord
   belongs_to :configuration_build
   has_many :build_task_runs
-  has_one :running_task_run, -> { running }, class_name: 'BuildTaskRun'
 
   scope :available, -> { where(state: "available") }
   scope :running, -> { where(state: "running") }
 
   scope :for_stage, -> (stage) { where(stage: stage) }
+  scope :for_build, -> (build_id) { where(configuration_build_id: build_id) }
+
+  STATES = %w(available running failed success)
+  STATES.each { |state| scope state, -> { where(state: state) } }
+  validates_inclusion_of :state, in: STATES
 
   def as_json(options = nil)
     {
@@ -25,5 +29,9 @@ class BuildTask < ApplicationRecord
         }
       }
     }
+  end
+
+  def complete?
+    %w(failed success).include?(state)
   end
 end

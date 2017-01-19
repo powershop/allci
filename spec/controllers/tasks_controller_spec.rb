@@ -9,7 +9,7 @@ RSpec.describe TasksController, type: :controller do
       expect(service).to receive(:call).and_return(build_task)
       expect(build_task).to receive(:to_json).and_return("{ foo: 'bar' }")
 
-      post :pull, params: { task: { id: "containers", stage: nil, runner_name: "foo-12:1" } }
+      post :pull, params: { task: { build_id: nil, stage: nil, runner_name: "foo-12:1" } }
 
       expect(response.status).to eq(200)
       expect(response.content_type).to eq("application/json")
@@ -21,9 +21,35 @@ RSpec.describe TasksController, type: :controller do
       expect(AssignTask).to receive(:new).with(build_id: nil, stage: nil, runner_name: "foo-12:1").and_return(service)
       expect(service).to receive(:call).and_return(nil)
 
-      post :pull, params: { task: { id: "containers", stage: nil, runner_name: "foo-12:1" } }
+      post :pull, params: { task: { build_id: nil, stage: nil, runner_name: "foo-12:1" } }
 
       expect(response.status).to eq(204)
+    end
+  end
+
+  describe "#success" do
+    it "receives queue pull requests and passes the data to CompleteTask" do
+      service = instance_double(CompleteTask)
+      build_task = instance_double(BuildTask)
+      expect(CompleteTask).to receive(:new).with(task_id: "1234", runner_name: "foo-12:1", output: "task output here", failed: false).and_return(service)
+      expect(service).to receive(:call).and_return(build_task)
+
+      post :success, params: { task: { task_id: "1234", runner_name: "foo-12:1", output: "task output here" } }
+
+      expect(response.status).to eq(200)
+    end
+  end
+
+  describe "#failed" do
+    it "receives queue pull requests and passes the data to CompleteTask" do
+      service = instance_double(CompleteTask)
+      build_task = instance_double(BuildTask)
+      expect(CompleteTask).to receive(:new).with(task_id: "1234", runner_name: "foo-12:1", output: "task output here", failed: true).and_return(service)
+      expect(service).to receive(:call).and_return(build_task)
+
+      post :failed, params: { task: { task_id: "1234", runner_name: "foo-12:1", output: "task output here" } }
+
+      expect(response.status).to eq(200)
     end
   end
 end

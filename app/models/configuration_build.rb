@@ -5,7 +5,7 @@ class ConfigurationBuild < ApplicationRecord
 
   delegate :project, to: :configuration
 
-  STATES = %w(available running finishing failed successful)
+  STATES = %w(available running failed success)
   STATES.each { |state| scope state, -> { where(state: state) } }
   validates_inclusion_of :state, in: STATES
 

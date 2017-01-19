@@ -4,6 +4,7 @@ class CreateProjects < ActiveRecord::Migration[5.0]
       t.string   :name, null: false
       t.integer  :created_by_user
       t.timestamps
+      t.index    :name, unique: true
     end
   end
 end

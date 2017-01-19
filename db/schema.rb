@@ -13,13 +13,14 @@
 ActiveRecord::Schema.define(version: 20161118011005) do
 
   create_table "build_task_runs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "build_task_id",                     null: false
-    t.string   "state",         default: "running", null: false
-    t.integer  "runner_id",                         null: false
-    t.datetime "started_at",                        null: false
+    t.integer  "build_task_id",                                      null: false
+    t.string   "state",                          default: "running", null: false
+    t.integer  "runner_id",                                          null: false
+    t.datetime "started_at",                                         null: false
     t.datetime "finished_at"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.text     "output",        limit: 16777215
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
     t.index ["build_task_id", "state"], name: "index_build_task_runs_by_build_task", using: :btree
     t.index ["runner_id", "build_task_id"], name: "index_build_task_runs_by_runner", using: :btree
   end
@@ -84,6 +85,7 @@ ActiveRecord::Schema.define(version: 20161118011005) do
     t.integer  "created_by_user"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.index ["name"], name: "index_projects_on_name", unique: true, using: :btree
   end
 
   create_table "repositories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

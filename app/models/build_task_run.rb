@@ -6,4 +6,8 @@ class BuildTaskRun < ApplicationRecord
 
   scope :running, -> { where(state: "running") }
   scope :running_on, -> (runner_name) { joins(:runner).where('runners.name' => runner_name) }
+
+  STATES = %w(available running aborted failed success)
+  STATES.each { |state| scope state, -> { where(state: state) } }
+  validates_inclusion_of :state, in: STATES
 end

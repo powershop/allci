@@ -7,8 +7,9 @@ class AssignTask
 
   def call
     BuildTask.transaction do
-      if task = task_to_retry
-        task.running_task_run.update!(state: "aborted", finished_at: Time.now) if task
+      if task_run = task_run_to_retry
+        task = task_run.build_task
+        task_run.update!(state: "aborted", finished_at: Time.now) if task
       elsif task = available_build_tasks.lock.take
         task.workers_to_run -= 1
         task.state = "running" if task.workers_to_run < 1
@@ -27,8 +28,8 @@ class AssignTask
     end
   end
 
-  def task_to_retry
-    build_tasks.running.joins(:running_task_run).merge(BuildTaskRun.running_on(@runner_name)).take
+  def task_run_to_retry
+    BuildTaskRun.running.running_on(@runner_name).joins(:build_task).merge(build_tasks).take
   end
 
   def available_build_tasks

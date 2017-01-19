@@ -9,4 +9,18 @@ class TasksController < ApplicationController
       head :no_content
     end
   end
+
+  def success
+    complete
+  end
+
+  def failed
+    complete(failed: true)
+  end
+
+protected
+  def complete(failed: false)
+    CompleteTask.new(task_id: params["task"]["task_id"], runner_name: params["task"]["runner_name"], output: params["task"]["output"], failed: failed).call
+    head :ok
+  end
 end
