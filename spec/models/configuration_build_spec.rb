@@ -14,8 +14,8 @@ RSpec.describe ConfigurationBuild, type: :model do
     let(:configuration_build) { configuration.configuration_builds.create!(state: "available") }
 
     it "names images based on the project name, build ID, and component container name" do
-      expect(configuration_build.image_name_for(app_component)).to eq("Test_project_1-myapp:build-#{configuration_build.id}")
-      expect(configuration_build.image_name_for(db_component)).to eq("Test_project_1-db:build-#{configuration_build.id}")
+      expect(configuration_build.image_name_for(app_component)).to eq("test_project_1-myapp:build-#{configuration_build.id}")
+      expect(configuration_build.image_name_for(db_component)).to eq("test_project_1-db:build-#{configuration_build.id}")
     end
   end
 end
