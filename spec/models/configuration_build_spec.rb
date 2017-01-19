@@ -17,5 +17,11 @@ RSpec.describe ConfigurationBuild, type: :model do
       expect(configuration_build.image_name_for(app_component)).to eq("test_project_1-myapp:build-#{configuration_build.id}")
       expect(configuration_build.image_name_for(db_component)).to eq("test_project_1-db:build-#{configuration_build.id}")
     end
+
+    it "includes the registry name if set" do
+      allow(Registry).to receive(:host).and_return("local-docker-registry:5000")
+      expect(configuration_build.image_name_for(app_component)).to eq("local-docker-registry:5000/test_project_1-myapp:build-#{configuration_build.id}")
+      expect(configuration_build.image_name_for(db_component)).to eq("local-docker-registry:5000/test_project_1-db:build-#{configuration_build.id}")
+    end
   end
 end

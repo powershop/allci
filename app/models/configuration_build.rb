@@ -10,6 +10,6 @@ class ConfigurationBuild < ApplicationRecord
   validates_inclusion_of :state, in: STATES
 
   def image_name_for(component)
-    "#{project.name.downcase.tr('^A-Za-z0-9_', '_')}-#{component.container_name}:build-#{id}"
+    "#{Registry.host_prefix}#{project.name.downcase.tr('^A-Za-z0-9_', '_')}-#{component.container_name}:build-#{id}"
   end
 end
