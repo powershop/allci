@@ -5,10 +5,10 @@ RSpec.describe BuildTask, type: :model do
   let(:configuration) { project.configurations.create!(name: "Normal config", build_priority: 100) }
 
   let(:app_repository) { Repository.create!(uri: "git@github.com:willbryant/demo_project.git") }
-  let(:app_component) { configuration.components.create!(repository: app_repository, container_name: "myapp", branch: "mytopic")}
+  let(:app_component) { configuration.components.create!(repository: app_repository, container_name: "myapp", branch: "mytopic").tap { |c| c.component_variables.create!(name: 'Country', value: 'NZ') } }
 
   let(:db_repository) { Repository.create!(uri: "git@github.com:willbryant/demo_db_project.git") }
-  let(:db_component) { configuration.components.create!(repository: db_repository, container_name: "db")}
+  let(:db_component) { configuration.components.create!(repository: db_repository, container_name: "db") }
 
   let(:configuration_build) { configuration.configuration_builds.create!(state: "available") }
   let(:build_task) { configuration_build.build_tasks.create!(state: "available", workers_to_run: 1, stage: "bootstrap", task: "build_component_images") }
@@ -33,6 +33,7 @@ RSpec.describe BuildTask, type: :model do
             branch: db_component.branch,
             dockerfile: db_component.dockerfile,
             image_name: configuration_build.image_name_for(db_component),
+            env: {},
           },
           "myapp" => {
             repository_name: "Demo project",
@@ -40,6 +41,9 @@ RSpec.describe BuildTask, type: :model do
             branch: app_component.branch,
             dockerfile: app_component.dockerfile,
             image_name: configuration_build.image_name_for(app_component),
+            env: {
+              'Country' => 'NZ',
+            }
           },
         }
       })

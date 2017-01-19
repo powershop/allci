@@ -26,6 +26,7 @@ class BuildTask < ApplicationRecord
           branch: component.branch,
           dockerfile: component.dockerfile,
           image_name: configuration_build.image_name_for(component),
+          env: component.component_variables.each_with_object({}) { |cv, results| results[cv.name] = cv.value },
         }
       }
     }
