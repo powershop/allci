@@ -9,6 +9,7 @@ class StoreTaskOutput
     BuildTask.transaction do
       store_output
       task
+      task_run.save!
     end
   end
 
@@ -21,12 +22,14 @@ protected
     @task_run ||= task.build_task_runs.running.running_on(@runner_name).take!
   end
 
+  def output_for(container_name)
+    @output_records ||= task_run.build_task_run_outputs.index_by(&:container_name)
+    @output_records[container_name] ||= task_run.build_task_run_outputs.build(container_name: container_name, output: '')
+  end
+
   def store_output
-    records = task_run.build_task_run_outputs.index_by(&:container_name)
     @output.each do |container_name, new_output|
-      record = records[container_name] || task_run.build_task_run_outputs.build(container_name: container_name, output: '')
-      record.output += new_output
-      record.save!
+      output_for(container_name).output += new_output
     end
   end
 end

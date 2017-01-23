@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CompleteTask do
   let(:output) { {"container1" => "task output here", "container2" => "more output"} }
+  let(:exit_code) { {"container1" => 0, "container2" => -127} }
 
   let(:project) { Project.create!(name: "Test project") }
   let(:configuration) { project.configurations.create!(name: "Standard build", build_priority: 100) }
@@ -10,14 +11,20 @@ RSpec.describe CompleteTask do
 
   def expect_output_on(task_run)
     expect(task_run.build_task_run_outputs.size).to eq(2)
-    expect(task_run.build_task_run_outputs.find_by_container_name("container1").output).to eq("task output here")
-    expect(task_run.build_task_run_outputs.find_by_container_name("container2").output).to eq("more output")
+
+    container1 = task_run.build_task_run_outputs.find_by_container_name("container1")
+    expect(container1.output).to eq("task output here")
+    expect(container1.exit_code).to eq(0)
+
+    container2 = task_run.build_task_run_outputs.find_by_container_name("container2")
+    expect(container2.output).to eq("more output")
+    expect(container2.exit_code).to eq(-127)
   end
 
   context "on single-worker tasks" do
     let(:runner_name) { "foo-1234:1" }
     let(:task) { AssignTask.new(build_id: nil, stage: nil, runner_name: runner_name).call }
-    let(:service) { CompleteTask.new(task_id: task.id, runner_name: runner_name, output: output, failed: failed) }
+    let(:service) { CompleteTask.new(task_id: task.id, runner_name: runner_name, output: output, exit_code: exit_code, failed: failed) }
 
     before do
       expect(build).not_to be_nil
@@ -70,7 +77,7 @@ RSpec.describe CompleteTask do
 
       it "marks the task run successful and the task successful if there are no other runs running" do
         runner_names.each do |runner_name|
-          expect(CompleteTask.new(task_id: task.id, runner_name: runner_name, output: output, failed: failed).call).to eq(task)
+          expect(CompleteTask.new(task_id: task.id, runner_name: runner_name, output: output, exit_code: exit_code, failed: failed).call).to eq(task)
         end
 
         task.reload
@@ -81,7 +88,7 @@ RSpec.describe CompleteTask do
       end
 
       it "marks the task run successful and leaves the task running if there are still other runs running" do
-        expect(CompleteTask.new(task_id: task.id, runner_name: runner_names.last, output: output, failed: failed).call).to eq(task)
+        expect(CompleteTask.new(task_id: task.id, runner_name: runner_names.last, output: output, exit_code: exit_code, failed: failed).call).to eq(task)
 
         task.reload
         expect(task.state).to eq("running")
@@ -95,7 +102,7 @@ RSpec.describe CompleteTask do
       let(:failed) { true }
 
       it "marks the task run failed and the task failed, even if there are still other runs running" do
-        expect(CompleteTask.new(task_id: task.id, runner_name: runner_names.last, output: output, failed: failed).call).to eq(task)
+        expect(CompleteTask.new(task_id: task.id, runner_name: runner_names.last, output: output, exit_code: exit_code, failed: failed).call).to eq(task)
 
         task.reload
         expect(task.state).to eq("failed")

@@ -20,7 +20,13 @@ class TasksController < ApplicationController
 
 protected
   def complete(failed: false)
-    CompleteTask.new(task_id: params["task"]["task_id"], runner_name: params["task"]["runner_name"], output: params["task"]["output"].permit!.to_h, failed: failed).call
+    CompleteTask.new(
+      task_id: params["task"]["task_id"],
+      runner_name: params["task"]["runner_name"],
+      output: params["task"]["output"].permit!.to_h,
+      exit_code: params["task"]["exit_code"].permit!.to_h,
+      failed: failed,
+    ).call
     head :ok
   end
 end

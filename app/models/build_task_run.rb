@@ -1,7 +1,7 @@
 class BuildTaskRun < ApplicationRecord
   belongs_to :build_task
   belongs_to :runner
-  has_many   :build_task_run_outputs
+  has_many   :build_task_run_outputs, autosave: true
 
   validates_presence_of :started_at
 
