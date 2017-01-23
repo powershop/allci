@@ -1,12 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe CompleteTask do
-  let(:output) { "task output here" }
+  let(:output) { {"container1" => "task output here", "container2" => "more output"} }
 
   let(:project) { Project.create!(name: "Test project") }
   let(:configuration) { project.configurations.create!(name: "Standard build", build_priority: 100) }
   let(:repository) { Repository.create!(uri: "git@github.com:willbryant/demo_project.git") }
   let(:build) { EnqueueConfigurationBuild.new(configuration).call({}) }
+
+  def expect_output_on(task_run)
+    expect(task_run.build_task_run_outputs.size).to eq(2)
+    expect(task_run.build_task_run_outputs.find_by_container_name("container1").output).to eq("task output here")
+    expect(task_run.build_task_run_outputs.find_by_container_name("container2").output).to eq("more output")
+  end
 
   context "on single-worker tasks" do
     let(:runner_name) { "foo-1234:1" }
@@ -29,7 +35,7 @@ RSpec.describe CompleteTask do
         expect(task.state).to eq("success")
         expect(task.build_task_runs.first.state).to eq("success")
         expect(task.build_task_runs.first.finished_at).not_to be_blank
-        expect(task.build_task_runs.first.output).to eq(output)
+        expect_output_on(task.build_task_runs.first)
       end
     end
 
@@ -43,7 +49,7 @@ RSpec.describe CompleteTask do
         expect(task.state).to eq("failed")
         expect(task.build_task_runs.first.state).to eq("failed")
         expect(task.build_task_runs.first.finished_at).not_to be_blank
-        expect(task.build_task_runs.first.output).to eq(output)
+        expect_output_on(task.build_task_runs.first)
       end
     end
   end
@@ -71,7 +77,7 @@ RSpec.describe CompleteTask do
         expect(task.state).to eq("success")
         expect(task.build_task_runs.last.state).to eq("success")
         expect(task.build_task_runs.last.finished_at).not_to be_blank
-        expect(task.build_task_runs.last.output).to eq(output)
+        expect_output_on(task.build_task_runs.last)
       end
 
       it "marks the task run successful and leaves the task running if there are still other runs running" do
@@ -81,7 +87,7 @@ RSpec.describe CompleteTask do
         expect(task.state).to eq("running")
         expect(task.build_task_runs.last.state).to eq("success")
         expect(task.build_task_runs.last.finished_at).not_to be_blank
-        expect(task.build_task_runs.last.output).to eq(output)
+        expect_output_on(task.build_task_runs.last)
       end
     end
 
@@ -95,7 +101,7 @@ RSpec.describe CompleteTask do
         expect(task.state).to eq("failed")
         expect(task.build_task_runs.last.state).to eq("failed")
         expect(task.build_task_runs.last.finished_at).not_to be_blank
-        expect(task.build_task_runs.last.output).to eq(output)
+        expect_output_on(task.build_task_runs.last)
       end
     end
   end

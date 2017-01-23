@@ -1,37 +1,35 @@
-class CompleteTask
+class CompleteTask < StoreTaskOutput
   def initialize(task_id:, runner_name:, output:, failed:)
-    @task_id = task_id
-    @runner_name = runner_name
-    @output = output
+    super task_id: task_id, runner_name: runner_name, output: output
     @failed = failed
   end
 
   def call
     BuildTask.transaction do
-      task_run.finished_at = Time.now
-      task_run.output = @output
-      task_run.state = @failed ? "failed" : "success"
-      task_run.save!
-
-      if !task.complete?
-        if @failed
-          task.state = "failed"
-        elsif task.build_task_runs.running.present?
-          task.state = "running"
-        else
-          task.state = "success"
-        end
-      end
-      task.save!
+      store_output
+      update_task_run_state
+      update_task_state
       task
     end
   end
 
-  def task
-    @task ||= BuildTask.lock.find(@task_id)
+protected
+  def update_task_run_state
+    task_run.finished_at = Time.now
+    task_run.state = @failed ? "failed" : "success"
+    task_run.save!
   end
 
-  def task_run
-    @task_run ||= task.build_task_runs.running.running_on(@runner_name).take!
+  def update_task_state
+    if !task.complete?
+      if @failed
+        task.state = "failed"
+      elsif task.build_task_runs.running.present?
+        task.state = "running"
+      else
+        task.state = "success"
+      end
+    end
+    task.save!
   end
 end

@@ -10,17 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161118011005) do
+ActiveRecord::Schema.define(version: 20170123092350) do
+
+  create_table "build_task_run_outputs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4" do |t|
+    t.integer  "build_task_run_id",                  null: false
+    t.string   "container_name",                     null: false
+    t.text     "output",            limit: 16777215, null: false
+    t.integer  "exit_code"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.index ["build_task_run_id", "container_name"], name: "index_build_task_run_outputs_on_container", unique: true, using: :btree
+    t.index ["created_at"], name: "index_build_task_run_outputs_on_created_at", using: :btree
+  end
 
   create_table "build_task_runs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "build_task_id",                                      null: false
-    t.string   "state",                          default: "running", null: false
-    t.integer  "runner_id",                                          null: false
-    t.datetime "started_at",                                         null: false
+    t.integer  "build_task_id",                     null: false
+    t.string   "state",         default: "running", null: false
+    t.integer  "runner_id",                         null: false
+    t.datetime "started_at",                        null: false
     t.datetime "finished_at"
-    t.text     "output",        limit: 16777215
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.index ["build_task_id", "state"], name: "index_build_task_runs_by_build_task", using: :btree
     t.index ["runner_id", "build_task_id"], name: "index_build_task_runs_by_runner", using: :btree
   end

@@ -1,0 +1,2 @@
+class BuildTaskRunOutput < ApplicationRecord
+end
