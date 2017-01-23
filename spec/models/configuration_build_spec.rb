@@ -14,14 +14,14 @@ RSpec.describe ConfigurationBuild, type: :model do
     let(:configuration_build) { configuration.configuration_builds.create!(state: "available") }
 
     it "names images based on the project name, build ID, and component container name" do
-      expect(configuration_build.image_name_for(app_component)).to eq("test_project_1-myapp:build-#{configuration_build.id}")
-      expect(configuration_build.image_name_for(db_component)).to eq("test_project_1-db:build-#{configuration_build.id}")
+      expect(configuration_build.image_name_for(app_component)).to eq("localhost:5000/test_project_1-myapp:build-#{configuration_build.id}")
+      expect(configuration_build.image_name_for(db_component)).to eq("localhost:5000/test_project_1-db:build-#{configuration_build.id}")
     end
 
-    it "includes the registry name if set" do
-      allow(Registry).to receive(:host).and_return("local-docker-registry:5000")
-      expect(configuration_build.image_name_for(app_component)).to eq("local-docker-registry:5000/test_project_1-myapp:build-#{configuration_build.id}")
-      expect(configuration_build.image_name_for(db_component)).to eq("local-docker-registry:5000/test_project_1-db:build-#{configuration_build.id}")
+    it "includes the configured registry name if set" do
+      allow(Registry).to receive(:host).and_return("my-docker-registry:5000")
+      expect(configuration_build.image_name_for(app_component)).to eq("my-docker-registry:5000/test_project_1-myapp:build-#{configuration_build.id}")
+      expect(configuration_build.image_name_for(db_component)).to eq("my-docker-registry:5000/test_project_1-db:build-#{configuration_build.id}")
     end
   end
 end
