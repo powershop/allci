@@ -8,6 +8,7 @@ Project.transaction do
 
   allci_repository = Repository.find_or_create_by!(uri: "git@github.com:powershop/allci.git")
   allci_component = test_with_mysql.components.find_or_create_by!(repository: allci_repository, container_name: "allci")
+  allci_component.component_variables.find_or_create_by!(name: "ALLCI_DATABASE_SERVER", value: "db")
 
   mysql_repository = Repository.find_or_create_by!(uri: "git@github.com:powershop/allci-test-mysql.git")
   mysql_container = test_with_mysql.components.find_or_create_by!(repository: mysql_repository, container_name: "db")
