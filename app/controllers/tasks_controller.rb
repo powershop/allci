@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def pull
-    @task = AssignTask.new(build_id: params["task"]["build_id"].presence, stage: params["task"]["stage"].presence, runner_name: params["task"]["runner_name"]).call
+    @task = AssignTask.new(build_id: params["build_id"].presence, stage: params["stage"].presence, runner_name: params["runner_name"]).call
     if @task
       render json: @task
     else
@@ -12,9 +12,9 @@ class TasksController < ApplicationController
 
   def output
     StoreTaskOutput.new(
-      task_id: params["task"]["task_id"],
-      runner_name: params["task"]["runner_name"],
-      output: params["task"]["output"].permit!.to_h,
+      task_id: params["task_id"],
+      runner_name: params["runner_name"],
+      output: params["output"].permit!.to_h,
     ).call
     head :ok
   end
@@ -30,10 +30,10 @@ class TasksController < ApplicationController
 protected
   def complete(failed: false)
     CompleteTask.new(
-      task_id: params["task"]["task_id"],
-      runner_name: params["task"]["runner_name"],
-      output: params["task"]["output"].permit!.to_h,
-      exit_code: params["task"]["exit_code"].permit!.to_h,
+      task_id: params["task_id"],
+      runner_name: params["runner_name"],
+      output: params["output"].permit!.to_h,
+      exit_code: params["exit_code"].permit!.to_h,
       failed: failed,
     ).call
     head :ok

@@ -9,7 +9,7 @@ RSpec.describe TasksController, type: :controller do
       expect(service).to receive(:call).and_return(build_task)
       expect(build_task).to receive(:to_json).and_return("{ foo: 'bar' }")
 
-      post :pull, params: { task: { build_id: nil, stage: nil, runner_name: "foo-12:1" } }
+      post :pull, params: { build_id: nil, stage: nil, runner_name: "foo-12:1" }
 
       expect(response.status).to eq(200)
       expect(response.content_type).to eq("application/json")
@@ -21,7 +21,7 @@ RSpec.describe TasksController, type: :controller do
       expect(AssignTask).to receive(:new).with(build_id: nil, stage: nil, runner_name: "foo-12:1").and_return(service)
       expect(service).to receive(:call).and_return(nil)
 
-      post :pull, params: { task: { build_id: nil, stage: nil, runner_name: "foo-12:1" } }
+      post :pull, params: { build_id: nil, stage: nil, runner_name: "foo-12:1" }
 
       expect(response.status).to eq(204)
     end
@@ -34,7 +34,7 @@ RSpec.describe TasksController, type: :controller do
       expect(StoreTaskOutput).to receive(:new).with(task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}).and_return(service)
       expect(service).to receive(:call).and_return(build_task)
 
-      post :output, params: { task: { task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"} } }
+      post :output, params: { task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"} }
 
       expect(response.status).to eq(200)
     end
@@ -47,7 +47,7 @@ RSpec.describe TasksController, type: :controller do
       expect(CompleteTask).to receive(:new).with(task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}, exit_code: {"container1" => "127", "container2" => "0"}, failed: false).and_return(service)
       expect(service).to receive(:call).and_return(build_task)
 
-      post :success, params: { task: { task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}, exit_code: {"container1" => 127, "container2" => 0} } }
+      post :success, params: { task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}, exit_code: {"container1" => 127, "container2" => 0} }
 
       expect(response.status).to eq(200)
     end
@@ -60,7 +60,7 @@ RSpec.describe TasksController, type: :controller do
       expect(CompleteTask).to receive(:new).with(task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}, exit_code: {"container1" => "127", "container2" => "0"}, failed: true).and_return(service)
       expect(service).to receive(:call).and_return(build_task)
 
-      post :failed, params: { task: { task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}, exit_code: {"container1" => 127, "container2" => 0} } }
+      post :failed, params: { task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}, exit_code: {"container1" => 127, "container2" => 0} }
 
       expect(response.status).to eq(200)
     end
