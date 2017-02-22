@@ -21,4 +21,5 @@ WORKDIR /app
 RUN bundle install --deployment --path /gems
 
 ENV MYSQL_SERVER=db
-CMD ["bundle", "exec", "rake", "wait_for_database", "db:create", "db:migrate", "default"]
+ENTRYPOINT ["bundle", "exec", "rake", "wait_for_database", "db:create", "db:migrate"]
+CMD ["default"]
