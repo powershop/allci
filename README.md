@@ -1,24 +1,28 @@
-# README
+# Quickstart
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+* Run a docker registry:
 
-Things you may want to cover:
+  docker pull registry:latest
+  docker run -p 5000:5000 registry:latest
 
-* Ruby version
+* Start a new terminal.  Check out this app, and install the bundle:
 
-* System dependencies
+  bundle install
 
-* Configuration
+* Create and migrate the database:
 
-* Database creation
+  bundle exec rake db:setup
 
-* Database initialization
+* Seed a job to build, since there's no UI yet:
 
-* How to run the test suite
+  bundle exec rake db:seed
 
-* Services (job queues, cache servers, search engines, etc.)
+* Start a new terminal.  Check out the allci-runner, and install the bundle:
 
-* Deployment instructions
+  bundle install
 
-* ...
+* Start a runner node, pointing back to the app you started earlier:
+
+  CI_SERVICE_URL=http://localhost:3000 ./runner.rb
+
+You can repeat the db:seed step wheneve you want to queue another build.
