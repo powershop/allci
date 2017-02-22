@@ -2,9 +2,6 @@ class BuildTask < ApplicationRecord
   belongs_to :configuration_build
   has_many :build_task_runs
 
-  scope :available, -> { where(state: "available") }
-  scope :running, -> { where(state: "running") }
-
   scope :for_stage, -> (stage) { where(stage: stage) }
   scope :for_build, -> (build_id) { where(configuration_build_id: build_id) }
 
