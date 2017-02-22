@@ -27,8 +27,21 @@ RSpec.describe TasksController, type: :controller do
     end
   end
 
+  describe "#output" do
+    it "receives task output and passes the data to StoreTaskOutput" do
+      service = instance_double(StoreTaskOutput)
+      build_task = instance_double(BuildTask)
+      expect(StoreTaskOutput).to receive(:new).with(task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}).and_return(service)
+      expect(service).to receive(:call).and_return(build_task)
+
+      post :output, params: { task: { task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"} } }
+
+      expect(response.status).to eq(200)
+    end
+  end
+
   describe "#success" do
-    it "receives queue pull requests and passes the data to CompleteTask" do
+    it "receives task completion requests and passes the data to CompleteTask" do
       service = instance_double(CompleteTask)
       build_task = instance_double(BuildTask)
       expect(CompleteTask).to receive(:new).with(task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}, exit_code: {"container1" => "127", "container2" => "0"}, failed: false).and_return(service)
@@ -41,7 +54,7 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "#failed" do
-    it "receives queue pull requests and passes the data to CompleteTask" do
+    it "receives task completion requests and passes the data to CompleteTask" do
       service = instance_double(CompleteTask)
       build_task = instance_double(BuildTask)
       expect(CompleteTask).to receive(:new).with(task_id: "1234", runner_name: "foo-12:1", output: {"container1" => "task output here", "container2" => "more output"}, exit_code: {"container1" => "127", "container2" => "0"}, failed: true).and_return(service)

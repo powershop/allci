@@ -10,6 +10,15 @@ class TasksController < ApplicationController
     end
   end
 
+  def output
+    StoreTaskOutput.new(
+      task_id: params["task"]["task_id"],
+      runner_name: params["task"]["runner_name"],
+      output: params["task"]["output"].permit!.to_h,
+    ).call
+    head :ok
+  end
+
   def success
     complete
   end
