@@ -24,7 +24,6 @@ RSpec.describe BuildTask, type: :model do
         task_id: build_task.id,
         stage: "bootstrap",
         task: "build_component_images",
-        workers_to_run: 1,
         configuration_name: "Normal config",
         components: {
           "db" => {

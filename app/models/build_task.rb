@@ -17,7 +17,6 @@ class BuildTask < ApplicationRecord
       task_id: id,
       stage: stage,
       task: task,
-      workers_to_run: workers_to_run,
       configuration_name: configuration_build.configuration.name,
       components: configuration_build.configuration.components.order(:container_name).each_with_object({}) { |component, results|
         results[component.container_name] = {
