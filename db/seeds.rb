@@ -11,15 +11,21 @@ Project.transaction do
 
   test_with_mysql = project.configurations.find_or_create_by!(name: "Self-test with mysql")
   test_with_mariadb = project.configurations.find_or_create_by!(name: "Self-test with mariadb")
+  stats = project.configurations.find_or_create_by!(name: "Show stats")
 
-  mysql_container = test_with_mysql.components.find_or_create_by!(repository: mysql_repository, container_name: "db")
-  allci_with_mysql_component = test_with_mysql.components.find_or_create_by!(repository: allci_repository, container_name: "allci")
-  allci_with_mysql_component.component_variables.find_or_create_by!(name: "ALLCI_DATABASE_SERVER", value: "db")
+  db_component = test_with_mysql.components.find_or_create_by!(repository: mysql_repository, container_name: "db")
+  allci_component = test_with_mysql.components.find_or_create_by!(repository: allci_repository, container_name: "allci")
+  allci_component.component_variables.find_or_create_by!(name: "ALLCI_DATABASE_SERVER", value: "db")
 
-  mariadb_container = test_with_mariadb.components.find_or_create_by!(repository: mariadb_repository, container_name: "db")
-  allci_with_mysql_component = test_with_mariadb.components.find_or_create_by!(repository: allci_repository, container_name: "allci")
-  allci_with_mysql_component.component_variables.find_or_create_by!(name: "ALLCI_DATABASE_SERVER", value: "db")
+  db_component = test_with_mariadb.components.find_or_create_by!(repository: mariadb_repository, container_name: "db")
+  allci_component = test_with_mariadb.components.find_or_create_by!(repository: allci_repository, container_name: "allci")
+  allci_component.component_variables.find_or_create_by!(name: "ALLCI_DATABASE_SERVER", value: "db")
+
+  allci_component = stats.components.find_or_create_by!(repository: allci_repository, container_name: "allci")
+  allci_component.component_variables.find_or_create_by!(name: "BOOTSTRAP_RAKE_TASKS", value: "")
+  allci_component.component_variables.find_or_create_by!(name: "BUILD_RAKE_TASKS", value: "about stats notes")
 
   EnqueueConfigurationBuild.new(test_with_mysql).call({})
   EnqueueConfigurationBuild.new(test_with_mariadb).call({})
+  EnqueueConfigurationBuild.new(stats).call({})
 end
