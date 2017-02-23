@@ -27,6 +27,11 @@ class TasksController < ApplicationController
     complete(failed: true)
   end
 
+  def add
+    AddTasks.new(build_id: params["build_id"].presence, stage: params["stage"].presence, tasks: tasks_to_add).call
+    head :ok
+  end
+
 protected
   def complete(failed: false)
     CompleteTask.new(
@@ -37,5 +42,15 @@ protected
       failed: failed,
     ).call
     head :ok
+  end
+
+  def tasks_to_add
+    if params["tasks"]
+      Array(params["tasks"])
+    elsif params["task"]
+      [params["task"]]
+    else
+      request.body.read.split(/\r?\n/)
+    end
   end
 end

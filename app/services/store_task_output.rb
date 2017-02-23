@@ -8,7 +8,6 @@ class StoreTaskOutput
   def call
     BuildTask.transaction do
       store_output
-      task
       task_run.save!
     end
   end

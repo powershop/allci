@@ -65,4 +65,42 @@ RSpec.describe TasksController, type: :controller do
       expect(response.status).to eq(200)
     end
   end
+
+  describe "#add" do
+    it "accepts tasks as an array and creates a build task for each entry" do
+      service = instance_double(AddTasks)
+      first_task = instance_double(BuildTask)
+      second_task = instance_double(BuildTask)
+      expect(AddTasks).to receive(:new).with(build_id: "1234", stage: "run_tests", tasks: ["first task", "second task"]).and_return(service)
+      expect(service).to receive(:call).and_return([first_task, second_task])
+
+      post :add, params: { build_id: "1234", stage: "run_tests", tasks: ["first task", "second task"] }
+
+      expect(response.status).to eq(200)
+    end
+
+    it "accepts a single task and creates a build task for it" do
+      service = instance_double(AddTasks)
+      task = instance_double(BuildTask)
+      expect(AddTasks).to receive(:new).with(build_id: "1234", stage: "run_tests", tasks: ["this is the task"]).and_return(service)
+      expect(service).to receive(:call).and_return([task])
+
+      post :add, params: { build_id: "1234", stage: "run_tests", task: "this is the task" }
+
+      expect(response.status).to eq(200)
+    end
+
+    it "accepts tasks as newline-terminated string and creates a build task for each entry" do
+      service = instance_double(AddTasks)
+      first_task = instance_double(BuildTask)
+      second_task = instance_double(BuildTask)
+      expect(AddTasks).to receive(:new).with(build_id: "1234", stage: "run_tests", tasks: ["first task", "second task"]).and_return(service)
+      expect(service).to receive(:call).and_return([first_task, second_task])
+
+      request.env['RAW_POST_DATA'] = "first task\nsecond task\n"
+      post :add, params: { build_id: "1234", stage: "run_tests" }
+
+      expect(response.status).to eq(200)
+    end
+  end
 end

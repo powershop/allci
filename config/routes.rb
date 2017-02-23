@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   post '/tasks/output' => 'tasks#output'
   post '/tasks/success' => 'tasks#success'
   post '/tasks/failed' => 'tasks#failed'
+  post '/tasks/add' => 'tasks#add'
 end
