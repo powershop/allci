@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170123092350) do
+ActiveRecord::Schema.define(version: 20170223210737) do
 
   create_table "build_task_run_outputs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4" do |t|
     t.integer  "build_task_run_id",                  null: false
@@ -88,6 +88,21 @@ ActiveRecord::Schema.define(version: 20170123092350) do
     t.datetime "updated_at",     null: false
     t.index ["project_id", "build_priority"], name: "index_project_configurations_by_priority", using: :btree
     t.index ["project_id", "name"], name: "index_project_configuration_by_name", unique: true, using: :btree
+  end
+
+  create_table "labels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string  "name",                 limit: 64
+    t.integer "project_labels_count",            default: 0
+    t.index ["name"], name: "index_labels_on_name", unique: true, using: :btree
+  end
+
+  create_table "project_labels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "project_id"
+    t.integer "label_id"
+    t.index ["label_id", "project_id"], name: "index_project_labels_on_label_id_and_project_id", unique: true, using: :btree
+    t.index ["label_id"], name: "index_project_labels_on_label_id", using: :btree
+    t.index ["project_id", "label_id"], name: "index_project_labels_on_project_id_and_label_id", unique: true, using: :btree
+    t.index ["project_id"], name: "index_project_labels_on_project_id", using: :btree
   end
 
   create_table "projects", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

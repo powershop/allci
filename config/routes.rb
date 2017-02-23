@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   post '/tasks/success' => 'tasks#success'
   post '/tasks/failed' => 'tasks#failed'
 
+  resources :labels
   resources :projects
   root to: 'projects#index'
 end

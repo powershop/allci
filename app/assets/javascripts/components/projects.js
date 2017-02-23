@@ -7,15 +7,18 @@ Application.Components.Projects = {
     return m(
       'section.projects',
       m('h3', 'Projects'),
-      m('ul', Project.list.map(project => m(Item, { project })))
+      m(
+        'ul',
+        Project.visible().map(project => m(Application.Components.Project, { project }))
+      )
     )
   }
 }
 
-const Item = {
+Application.Components.Project = {
   view: function({ attrs }) {
     const { project } = attrs
-    const { name, id } = project
+    const { name, id, labels } = project
     return m(
       'li.project',
       m(
@@ -28,7 +31,8 @@ const Item = {
         ),
         m(
           '.details',
-          m('b', name)
+          m('b', name),
+          m('small.labels', labels.map(label => label.name).join(', '))
         ),
         m(
           '.timing',
