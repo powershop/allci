@@ -7,7 +7,7 @@ Application.Components.Application = {
       m(
         'main',
         m(Labels, { labels: ['Harry', 'Hermione', 'Ron', 'Draco'] }),
-        m(Projects, { projects: ['Charms', 'Potions', 'Transfiguration'] }),
+        m(Projects),
         m(Build)
       )
     ]
