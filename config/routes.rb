@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'projects/index'
+
   post '/webhooks/github' => 'webhooks#github'
   post '/webhooks/gitlab' => 'webhooks#gitlab'
 
@@ -6,4 +8,6 @@ Rails.application.routes.draw do
   post '/tasks/output' => 'tasks#output'
   post '/tasks/success' => 'tasks#success'
   post '/tasks/failed' => 'tasks#failed'
+
+  root to: 'projects#index'
 end

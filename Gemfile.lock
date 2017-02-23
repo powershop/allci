@@ -39,6 +39,15 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (7.1.4)
+    autoprefixer-rails (6.5.4)
+      execjs
+    bitters (1.5.0)
+      bourbon (~> 5.0.0.beta.7)
+      sass (~> 3.4)
+      thor (~> 0.19)
+    bourbon (5.0.0.beta.7)
+      sass (~> 3.4.22)
+      thor (~> 0.19.1)
     builder (3.2.2)
     byebug (9.0.6)
     concurrent-ruby (1.0.2)
@@ -73,9 +82,13 @@ GEM
     minitest (5.9.1)
     multi_json (1.12.1)
     mysql2 (0.4.5)
+    neat (2.0.0)
+      sass (~> 3.4)
+      thor (~> 0.19)
     nio4r (1.2.1)
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
+    normalize-rails (3.0.3)
     puma (3.6.0)
     rack (2.0.1)
     rack-test (0.6.3)
@@ -125,7 +138,7 @@ GEM
       rspec-mocks (~> 3.5.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    sass (3.4.22)
+    sass (3.4.23)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
       sass (~> 3.1)
@@ -147,7 +160,7 @@ GEM
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
-    thor (0.19.1)
+    thor (0.19.4)
     thread_safe (0.3.5)
     tilt (2.0.5)
     turbolinks (5.0.1)
@@ -170,11 +183,16 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  autoprefixer-rails
+  bitters
+  bourbon
   byebug
   jbuilder (~> 2.5)
   jquery-rails
   listen (~> 3.0.5)
   mysql2 (>= 0.3.18, < 0.5)
+  neat
+  normalize-rails
   puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)
   rspec-rails
