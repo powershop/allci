@@ -3,7 +3,7 @@ Application.Models.Label = {
   byId: {},
   loadList: function() {
     m.request({
-      url: '/labels',
+      url: `/labels?_=${new Date().getTime()}`,
       method: 'get'
     })
     .then(function(list) {

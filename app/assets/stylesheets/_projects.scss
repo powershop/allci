@@ -19,12 +19,17 @@
   }
 
   svg {
+    @include size(2.5em);
+    flex: 0 0 2.5em;
+
     circle {
       fill: $green;
     }
   }
 
   small {
+    @include ellipsis;
+    display: block;
     font-size: $small-font-size;
     color: $secondary-font-color;
   }
@@ -41,6 +46,7 @@
   }
 
   .timing {
+    flex: 0 0 4em; 
     text-align: right;
     color: $secondary-font-color;
   }

@@ -1,12 +1,20 @@
 Application.Models.Project = {
   list: [],
+  byId: {},
   loadList: function() {
     m.request({
-      url: '/projects',
+      url: `/projects?_=${new Date().getTime()}`,
       method: 'get'
     })
-    .then(list => Application.Models.Project.list = list)
+    .then(function(list) {
+      Application.Models.Project.list = list
+      Application.Models.Project.byId = list.reduce(function(hash, project) {
+        hash[project.id] = project
+        return hash
+      }, {})
+    })
   },
+  find: (id) => Application.Models.Project.byId[id],
   visible: function() {
     const { Label, Project } = Application.Models
     const labels = Label.selected()
