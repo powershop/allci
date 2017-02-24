@@ -17,9 +17,7 @@
 
   bundle exec rake db:seed
 
-* Start a new terminal.  Check out the allci-runner, and install the bundle:
-
-  bundle install
+* Start a new terminal.  Check out the allci-runner repo.
 
 * Start a runner node, pointing back to the app you started earlier:
 
