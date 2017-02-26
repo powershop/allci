@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(version: 20170123092350) do
     t.boolean  "triggers_builds",  default: true,         null: false
     t.string   "dockerfile",       default: "Dockerfile", null: false
     t.string   "container_name",                          null: false
+    t.string   "tmpfs"
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
     t.index ["configuration_id", "container_name"], name: "index_configuration_components_by_name", unique: true, using: :btree
