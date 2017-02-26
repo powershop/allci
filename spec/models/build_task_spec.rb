@@ -22,6 +22,7 @@ RSpec.describe BuildTask, type: :model do
     it "gives the list of all components and their images" do
       expect(build_task.as_json).to eq({
         task_id: build_task.id,
+        build_id: configuration_build.id,
         stage: "bootstrap",
         task: "build_component_images",
         configuration_name: "Normal config",

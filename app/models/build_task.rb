@@ -12,6 +12,7 @@ class BuildTask < ApplicationRecord
   def as_json(options = nil)
     {
       task_id: id,
+      build_id: configuration_build.id,
       stage: stage,
       task: task,
       configuration_name: configuration_build.configuration.name,

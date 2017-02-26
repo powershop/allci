@@ -28,7 +28,7 @@ class TasksController < ApplicationController
   end
 
   def add
-    AddTasks.new(build_id: params["build_id"].presence, stage: params["stage"].presence, tasks: tasks_to_add).call
+    AddTasks.new(build_id: params["build_id"].presence, stage: params["stage"].presence, tasks: tasks_to_add, workers_to_run: params["workers_to_run"].presence).call
     head :ok
   end
 
