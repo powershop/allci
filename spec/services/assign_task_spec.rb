@@ -49,5 +49,14 @@ RSpec.describe AssignTask do
       expect(task.build_task_runs.last.started_at).not_to be_blank
       expect(task.build_task_runs.last.runner.name).to eq(runner_name)
     end
+
+    context "when multiple stages are specified" do
+      let(:stage) { %w(bootstrap spawn) }
+
+      it "finds tasks in either stage" do
+        expect(task.stage).to eq("bootstrap")
+        expect(service.call).to eq(task)
+      end
+    end
   end
 end
