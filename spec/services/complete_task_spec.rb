@@ -23,7 +23,7 @@ RSpec.describe CompleteTask do
 
   context "on single-worker tasks" do
     let(:runner_name) { "foo-1234:1" }
-    let(:task) { AssignTask.new(build_id: nil, stage: nil, runner_name: runner_name).call }
+    let(:task) { AssignTask.new(build_id: nil, stage: "bootstrap", runner_name: runner_name).call }
     let(:service) { CompleteTask.new(task_id: task.id, runner_name: runner_name, output: output, exit_code: exit_code, failed: failed) }
 
     before do

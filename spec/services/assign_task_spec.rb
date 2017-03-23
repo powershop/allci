@@ -10,7 +10,7 @@ RSpec.describe AssignTask do
 
   context "when no build is specified" do
     let(:build_id) { nil }
-    let(:stage) { nil }
+    let(:stage) { "bootstrap" }
     let(:build) { EnqueueConfigurationBuild.new(configuration).call({}) }
     let(:task) { build.build_tasks.take }
 
