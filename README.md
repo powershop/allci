@@ -40,4 +40,10 @@
   CI_SERVICE_URL=http://localhost:3000 RUNNER_NAME=myhostname-2 ./runner.rb
   ```
 
+* If the docker registry you want to save the images on isn't on the same machine, you can specify it using `REGISTRY_HOST`:
+
+  ```
+  CI_SERVICE_URL=http://localhost:3000 REGISTRY_HOST=docker-registry.mynet:5000 ./runner.rb
+  ```
+
 You can repeat the `db:seed` step whenever you want to queue another build.
