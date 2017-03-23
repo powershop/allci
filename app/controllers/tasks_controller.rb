@@ -16,7 +16,7 @@ class TasksController < ApplicationController
       runner_name: params["runner_name"],
       output: params["output"].permit!.to_h,
     ).call
-    head :ok
+    render json: {}
   end
 
   def success
@@ -29,7 +29,7 @@ class TasksController < ApplicationController
 
   def add
     AddTasks.new(build_id: params["build_id"].presence, stage: params["stage"].presence, tasks: tasks_to_add, workers_to_run: params["workers_to_run"].presence).call
-    head :ok
+    render json: {}
   end
 
 protected
@@ -41,7 +41,7 @@ protected
       exit_code: params["exit_code"].permit!.to_h,
       failed: failed,
     ).call
-    head :ok
+    render json: {}
   end
 
   def tasks_to_add
