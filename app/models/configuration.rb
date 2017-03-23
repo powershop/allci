@@ -3,6 +3,7 @@ class Configuration < ApplicationRecord
   has_many :components
   has_many :repositories, through: :components
   has_many :configuration_builds
+  has_many :build_tasks, through: :configuration_builds
 
   validates_presence_of :name
   validates_uniqueness_of :name, scope: :project
