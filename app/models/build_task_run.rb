@@ -5,7 +5,6 @@ class BuildTaskRun < ApplicationRecord
 
   validates_presence_of :started_at
 
-  scope :running, -> { where(state: "running") }
   scope :running_on, -> (runner_name) { joins(:runner).where('runners.name' => runner_name) }
 
   STATES = %w(available running aborted failed success)
