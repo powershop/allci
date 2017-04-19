@@ -1,0 +1,65 @@
+body {
+  overflow: hidden;
+  @include position(fixed, 0 0 0 0);
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+
+  > header {
+    background: $medium-gray;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5em 1em;
+    position: relative;
+    z-index: 10;
+
+    a {
+      color: white;
+    }
+
+    .logo {
+      font-size: 1.25em;
+      line-height: 2rem;
+      font-weight: $light-font-weight;
+    }
+  }
+
+  > main {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+}
+
+main > section {
+  padding: 1rem;
+  overflow-y: auto;
+  position: relative;
+  background: $base-background-color;
+
+  &:not(:first-of-type) {
+    box-shadow: 0 0 0.5rem rgba(black, 0.25);
+  }
+
+  h3 {
+    color: $secondary-font-color;
+    font-size: $small-font-size;
+    font-weight: $bold-font-weight;
+    line-height: 1.5rem;
+    margin: 0;
+  }
+
+  .empty {
+    @include position(absolute, 0 0 0 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $oc-gray-3;
+    text-align: center;
+  }
+}

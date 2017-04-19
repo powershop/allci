@@ -28,6 +28,13 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'active_model_serializers', '~> 0.10.0'
+gem 'autoprefixer-rails'
+gem 'bitters'
+gem 'bourbon'
+gem 'neat'
+gem 'normalize-rails'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
