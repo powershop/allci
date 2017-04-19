@@ -51,4 +51,4 @@ You can repeat the `db:seed` step whenever you want to queue another build.
 
 ## Resources
 
-Design mockup [allci-mockup.pdf](../blob/master/allci-mockup.pdf)
+Design mockup [allci-mockup.pdf](./allci-mockup.pdf)
