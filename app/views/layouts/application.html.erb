@@ -7,6 +7,13 @@
   </head>
 
   <body>
-    <%= javascript_include_tag 'application' %>
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
+
+    <%= link_to "Sign in as Developer", user_developer_omniauth_authorize_path %>
+
+    <%= current_user ? current_user.email : 'nil' %>
+
+    <%#= javascript_include_tag 'application' %>
   </body>
 </html>

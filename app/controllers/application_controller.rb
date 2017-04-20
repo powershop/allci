@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
+  before_action :authenticate_user!
+
   after_action :render_application, unless: :performed?
   rescue_from ActionController::UnknownFormat, with: :try_to_render_application
 

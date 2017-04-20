@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
+
   get 'projects/index'
 
   post '/webhooks/github' => 'webhooks#github'
@@ -12,5 +14,6 @@ Rails.application.routes.draw do
 
   resources :labels
   resources :projects
+
   root to: 'projects#index'
 end
