@@ -32,7 +32,7 @@ These instructions will set up allci with a single master node and multiple work
 * Run the web app, giving it the name of your docker registry server, telling it to restart on failure:
 
   ```
-  docker run -p 3000:3000 -e ALLCI_DATABASE_SERVER=<your database server> -e ALLCI_DATABASE_USERNAME=<the database user you created> -e ALLCI_DATABASE_PASSWORD=<the database password> -e RAILS_ENV=production -e REGISTRY_HOST=http://<your docker registry server>:5000 --restart always allci
+  docker run -p 3000:3000 -e ALLCI_DATABASE_SERVER=<your database server> -e ALLCI_DATABASE_USERNAME=<the database user you created> -e ALLCI_DATABASE_PASSWORD=<the database password> -e RAILS_ENV=production -e REGISTRY_HOST=http://<your docker registry server>:5000 -e SECRET_KEY_BASE=<a randomly generated secret key> RAILS_LOG_TO_STDOUT=1 -d --restart always --name allci allci
   ```
 
 The docker `REGISTRY_HOST` needs to be accessible by this name on the runner nodes too, so you shouldn't use `localhost` in `REGISTRY_HOST` unless you intend to only run runners on the same node as the web app.
