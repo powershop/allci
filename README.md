@@ -18,7 +18,7 @@ These instructions will set up allci with a single master node and multiple work
 * Check out this repository and build the docker image:
 
   ```
-  git clone https:://github.com/powershop/allci.git
+  git clone https://github.com/powershop/allci.git
   cd allci
   docker build -t allci .
   ```
@@ -32,7 +32,7 @@ These instructions will set up allci with a single master node and multiple work
 * Run the web app, giving it the name of your docker registry server, telling it to restart on failure:
 
   ```
-  docker run -p 3000:3000 -e ALLCI_DATABASE_SERVER=<your database server> -e ALLCI_DATABASE_USERNAME=<the database user you created> -e ALLCI_DATABASE_PASSWORD=<the database password> -e RAILS_ENV=production -e REGISTRY_HOST=http://<your docker registry server>:5000 --restart allci
+  docker run -p 3000:3000 -e ALLCI_DATABASE_SERVER=<your database server> -e ALLCI_DATABASE_USERNAME=<the database user you created> -e ALLCI_DATABASE_PASSWORD=<the database password> -e RAILS_ENV=production -e REGISTRY_HOST=http://<your docker registry server>:5000 --restart always allci
   ```
 
 The docker `REGISTRY_HOST` needs to be accessible by this name on the runner nodes too, so you shouldn't use `localhost` in `REGISTRY_HOST` unless you intend to only run runners on the same node as the web app.
@@ -54,8 +54,8 @@ You can run the runner in the same node as the master node, but it's more common
 * Run one or more copies of the runner, pointing it back to your master node, giving it access to the docker engine so it can build and run containers, and telling it to restart on failure:
 
   ```
-  docker run -ti -e CI_SERVICE_URL=http://<your master node>:3000 -h `hostname`-runner1 -v /var/run/docker.sock:/var/run/docker.sock --restart allci-runner
-  docker run -ti -e CI_SERVICE_URL=http://<your master node>:3000 -h `hostname`-runner2 -v /var/run/docker.sock:/var/run/docker.sock --restart allci-runner
+  docker run -d --restart always -e CI_SERVICE_URL=http://<your master node>:3000 --name runner1 -h `hostname`-runner1 -v /var/run/docker.sock:/var/run/docker.sock allci-runner
+  docker run -d --restart always -e CI_SERVICE_URL=http://<your master node>:3000 --name runner2 -h `hostname`-runner2 -v /var/run/docker.sock:/var/run/docker.sock allci-runner
   ```
 
 The hostnames must be unique but are otherwise arbitrary, but they should be specified so that the runner sees the same name each time the container is restarted.  If you prefer, you can let docker randomly choose the hostname, but specify the runner name using `-e RUNNER_NAME=<name>`.
