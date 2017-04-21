@@ -10,10 +10,10 @@
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
 
-    <%= link_to "Sign in as Developer", user_developer_omniauth_authorize_path %>
-
-    <%= current_user ? current_user.email : 'nil' %>
-
-    <%#= javascript_include_tag 'application' %>
+    <% unless current_user %>
+      <%= link_to "Sign in as Developer", user_developer_omniauth_authorize_path %>
+    <% else %>
+      <%= javascript_include_tag 'application' %>
+    <% end %>
   </body>
 </html>
