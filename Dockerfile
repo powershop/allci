@@ -20,5 +20,4 @@ ADD . /app
 WORKDIR /app
 RUN bundle install --deployment --path /gems
 
-ENV MYSQL_SERVER=db
 CMD ./cmd.sh

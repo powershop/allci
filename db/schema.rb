@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170123092350) do
+ActiveRecord::Schema.define(version: 20170421012559) do
 
   create_table "build_task_run_outputs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4" do |t|
     t.integer  "build_task_run_id",                  null: false
@@ -48,12 +48,13 @@ ActiveRecord::Schema.define(version: 20170123092350) do
   end
 
   create_table "component_variables", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "component_id", null: false
-    t.string   "name",         null: false
+    t.integer  "component_id",                                     null: false
+    t.string   "name",                                             null: false
     t.string   "value"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-    t.index ["component_id", "name"], name: "index_component_variables_on_component_id_and_name", using: :btree
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
+    t.string   "variable_type", limit: 32, default: "runtime_env", null: false
+    t.index ["component_id", "variable_type", "name"], name: "index_component_variables_by_type_and_name", unique: true, using: :btree
   end
 
   create_table "components", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

@@ -5,7 +5,7 @@ RSpec.describe BuildTask, type: :model do
   let(:configuration) { project.configurations.create!(name: "Normal config", build_priority: 100) }
 
   let(:app_repository) { Repository.create!(uri: "git@github.com:willbryant/demo_project.git") }
-  let(:app_component) { configuration.components.create!(repository: app_repository, container_name: "myapp", branch: "mytopic").tap { |c| c.component_variables.create!(name: 'Country', value: 'NZ') } }
+  let(:app_component) { configuration.components.create!(repository: app_repository, container_name: "myapp", branch: "mytopic").tap { |c| c.component_variables.create!(name: 'Country', value: 'NZ'); c.component_variables.build_arg.create!(name: 'PORT_TO_EXPOSE', value: 3307) } }
 
   let(:db_repository) { Repository.create!(uri: "git@github.com:willbryant/demo_db_project.git") }
   let(:db_component) { configuration.components.create!(repository: db_repository, container_name: "db", tmpfs: "/var/lib/mysql:size=256m") }
@@ -33,7 +33,8 @@ RSpec.describe BuildTask, type: :model do
             branch: db_component.branch,
             dockerfile: db_component.dockerfile,
             image_name: configuration_build.image_name_for(db_component),
-            env: {},
+            runtime_env: {},
+            build_args: {},
             tmpfs: "/var/lib/mysql:size=256m",
           },
           "myapp" => {
@@ -42,8 +43,11 @@ RSpec.describe BuildTask, type: :model do
             branch: app_component.branch,
             dockerfile: app_component.dockerfile,
             image_name: configuration_build.image_name_for(app_component),
-            env: {
+            runtime_env: {
               'Country' => 'NZ',
+            },
+            build_args: {
+              'PORT_TO_EXPOSE' => '3307',
             },
             tmpfs: nil,
           },
