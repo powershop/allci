@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
   skip_before_action :verify_authenticity_token
+  skip_before_action :authenticate_user!
 
   def pull
     @task = AssignTask.new(build_id: params["build_id"].presence, stage: params["stage"].presence, runner_name: params["runner_name"]).call
