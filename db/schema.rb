@@ -92,6 +92,21 @@ ActiveRecord::Schema.define(version: 20170421012559) do
     t.index ["project_id", "name"], name: "index_project_configuration_by_name", unique: true, using: :btree
   end
 
+  create_table "labels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string  "name",                 limit: 64
+    t.integer "project_labels_count",            default: 0
+    t.index ["name"], name: "index_labels_on_name", unique: true, using: :btree
+  end
+
+  create_table "project_labels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "project_id"
+    t.integer "label_id"
+    t.index ["label_id", "project_id"], name: "index_project_labels_on_label_id_and_project_id", unique: true, using: :btree
+    t.index ["label_id"], name: "index_project_labels_on_label_id", using: :btree
+    t.index ["project_id", "label_id"], name: "index_project_labels_on_project_id_and_label_id", unique: true, using: :btree
+    t.index ["project_id"], name: "index_project_labels_on_project_id", using: :btree
+  end
+
   create_table "projects", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name",            null: false
     t.integer  "created_by_user"
@@ -116,10 +131,23 @@ ActiveRecord::Schema.define(version: 20170421012559) do
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string   "email",      null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "email",                               null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "provider"
+    t.string   "uid"
+    t.string   "name"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
 end
