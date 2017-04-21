@@ -54,8 +54,8 @@ You can run the runner in the same node as the master node, but it's more common
 * Run one or more copies of the runner, pointing it back to your master node, giving it access to the docker engine so it can build and run containers, and telling it to restart on failure:
 
   ```
-  docker run -d --restart always -e CI_SERVICE_URL=http://<your master node>:3000 --name runner1 -h `hostname`-runner1 -v /var/run/docker.sock:/var/run/docker.sock allci-runner
-  docker run -d --restart always -e CI_SERVICE_URL=http://<your master node>:3000 --name runner2 -h `hostname`-runner2 -v /var/run/docker.sock:/var/run/docker.sock allci-runner
+  docker run -d --restart always -e CI_SERVICE_URL=http://<your master node>:3000 --name runner1 -h `hostname`:1 -v /var/run/docker.sock:/var/run/docker.sock allci-runner
+  docker run -d --restart always -e CI_SERVICE_URL=http://<your master node>:3000 --name runner2 -h `hostname`:2 -v /var/run/docker.sock:/var/run/docker.sock allci-runner
   ```
 
 The hostnames must be unique but are otherwise arbitrary, but they should be specified so that the runner sees the same name each time the container is restarted.  If you prefer, you can let docker randomly choose the hostname, but specify the runner name using `-e RUNNER_NAME=<name>`.
