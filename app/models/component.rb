@@ -13,6 +13,6 @@ class Component < ApplicationRecord
 
 protected
   def set_default_container_name
-    self.container_name ||= repository.name.gsub(/\W/, '_').downcase
+    self.container_name ||= repository.name.gsub(/[^a-zA-Z0-9]/, '_').downcase
   end
 end
