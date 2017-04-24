@@ -1,6 +1,7 @@
 class BuildTask < ApplicationRecord
   belongs_to :configuration_build
   has_many :build_task_runs
+  has_many :build_task_run_outputs, through: :build_task_runs
 
   scope :for_stage, -> (stage) { where(stage: stage) }
   scope :for_build, -> (build_id) { where(configuration_build_id: build_id) }
