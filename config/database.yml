@@ -6,6 +6,9 @@ default: &default
   port: <%= ENV['ALLCI_DATABASE_PORT'] || 3306 %>
   username: <%= ENV['ALLCI_DATABASE_USERNAME'] || 'root' %>
   password: <%= ENV['ALLCI_DATABASE_PASSWORD'] %>
+  variables:
+    sql_mode: traditional,pipes_as_concat
+  transaction_isolation_level: read_committed
 
 development:
   <<: *default
