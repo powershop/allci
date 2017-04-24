@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Allci</title>
+    <title>All C-ing I</title>
     <%= csrf_meta_tags %>
-
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag    'application', media: 'all' %>
   </head>
 
   <body>
-    <%= yield %>
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
+
+    <% unless current_user %>
+      <%= link_to "Sign in as Developer", user_developer_omniauth_authorize_path %>
+    <% else %>
+      <%= javascript_include_tag 'application' %>
+    <% end %>
   </body>
 </html>
