@@ -24,12 +24,12 @@ class BuildTaskRun < ApplicationRecord
   def label
     return nil unless build_task.task
 
-    build_task.task.split(' ').last + " (#{duration})" + " - #{id}"
+    build_task.task.split(' ').last + " (#{duration.to_i}s)" + " - ID #{id}"
   end
 
   def short_label
     return nil unless build_task.task
 
-    build_task.task.split(' ').last.split('/').last + " (#{duration})"
+    build_task.task.split(' ').last.split('/').last + " (#{duration.to_i}s)"
   end
 end
