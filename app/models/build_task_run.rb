@@ -10,4 +10,26 @@ class BuildTaskRun < ApplicationRecord
   STATES = %w(available running aborted failed success)
   STATES.each { |state| scope state, -> { where(state: state) } }
   validates_inclusion_of :state, in: STATES
+
+  def duration
+    nil unless finished_at
+
+    finished_at - started_at
+  end
+
+  def relative_start(start_time_of_build)
+    started_at - start_time_of_build
+  end
+
+  def label
+    return nil unless build_task.task
+
+    build_task.task.split(' ').last + " (#{duration})" + " - #{id}"
+  end
+
+  def short_label
+    return nil unless build_task.task
+
+    build_task.task.split(' ').last.split('/').last + " (#{duration})"
+  end
 end
