@@ -1,0 +1,7 @@
+<ul>
+<% @configuration_builds.each do |configuration_build| %>
+  <li>
+    <%= link_to configuration_build.id, configuration_build %>
+  </li>
+<% end %>
+</ul>
