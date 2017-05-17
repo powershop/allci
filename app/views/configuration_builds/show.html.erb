@@ -17,11 +17,11 @@
 	</head>
 	<body>
     ConfigruationBuild <%= @configuration_build.id %> took <%= '%0.2f' % @runtime %>s.
-		<% @build_task_runs_by_runner.each do |runner_id, build_task_runs| %>
+		<% @build_task_runs_by_runner.each do |runner, build_task_runs| %>
       <% spawn_build_task_runs, regular_build_task_runs = build_task_runs.partition { |build_task_run| build_task_run.build_task.stage == 'spawn' } %>
       <% bootstrap_build_task_runs, regular_build_task_runs = regular_build_task_runs.partition { |build_task_run| build_task_run.build_task.stage == 'bootstrap' } %>
 		<div class="runner">
-      <div class="runner_label">Runner <%= runner_id %> (<%= build_task_runs.count %> build_task_runs)</div>
+      <div class="runner_label">Runner <%= runner.name %> (<%= build_task_runs.count %> build_task_runs)</div>
 
       <div class="worker">
 				<div class="worker_label">bootstrap</div>
