@@ -18,7 +18,7 @@ class ConfigurationBuildsController < ApplicationController
 
     @runtime = end_time - @start_time
 
-    @build_task_runs_by_runner = @build_task_runs.group_by(&:runner_id)
+    @build_task_runs_by_runner = @build_task_runs.joins(:runner).order("runners.name").preload(:runner).group_by(&:runner)
 
     respond_to do |format|
       format.html { render layout: false}
