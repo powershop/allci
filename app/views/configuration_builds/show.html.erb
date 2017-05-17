@@ -23,6 +23,7 @@
 		<div class="runner">
       <div class="runner_label">Runner <%= runner.name %> (<%= build_task_runs.count %> build_task_runs)</div>
 
+      <% if bootstrap_build_task_runs.present? %>
       <div class="worker">
 				<div class="worker_label">bootstrap</div>
         <% bootstrap_build_task_runs.each do |build_task_run| %>
@@ -33,9 +34,10 @@
           </div>
         <% end %>
       </div>
+      <% end %>
 
       <div class="worker">
-				<div class="worker_label">spawntasks</div>
+				<div class="worker_label">spawn</div>
         <% spawn_build_task_runs.each do |build_task_run| %>
           <% classification = (build_task_run.state == 'success' ? 'success' : 'failure') %>
           <div class="file <%= classification %>"
@@ -46,7 +48,7 @@
       </div>
 
 			<div class="worker">
-				<div class="worker_label">build_task_runs</div>
+				<div class="worker_label">run</div>
         <% regular_build_task_runs.each do |build_task_run| %>
           <% classification = (build_task_run.state == 'success' ? 'success' : 'failure') %>
           <div class="file <%= classification %>"
