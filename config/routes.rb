@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
   resources :labels
   resources :projects
+  resources :configurations
+  resources :configuration_builds
+  resources :build_tasks
 
   root to: 'projects#index'
 end
