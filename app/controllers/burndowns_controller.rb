@@ -7,10 +7,8 @@ class BurndownsController < ApplicationController
     else
       @configuration_build = ConfigurationBuild.last
     end
-    @build_task_runs = @configuration_build.build_task_runs.includes(:build_task)
-
-    @start_time = @build_task_runs.min_by(&:started_at).started_at
-    end_time = @build_task_runs.max_by(&:finished_at).finished_at
+    @start_time = @configuration_build.build_task_runs.order(:started_at).first.started_at
+    end_time = @configuration_build.build_task_runs.order(:finished_at).last.finished_at
 
     @runtime = end_time - @start_time
 
@@ -21,6 +19,8 @@ class BurndownsController < ApplicationController
             end
 
     @scale_time = scale
+
+    @build_task_runs = BuildTaskRun.where(started_at: @start_time..(@start_time + @scale_time)).includes(:build_task)
 
     @build_task_runs_by_runner = @build_task_runs.joins(:runner).order("runners.name").preload(:runner).group_by(&:runner)
 
