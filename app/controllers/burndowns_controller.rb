@@ -1,14 +1,6 @@
 class BurndownsController < ApplicationController
   skip_before_action :authenticate_user!
 
-  def index
-    @configuration_builds = ConfigurationBuild.all.order(:created_at)
-    respond_to do |format|
-      format.json { render json: @configuration_builds }
-      format.html { render layout: 'simple' }
-    end
-  end
-
   def show
     if params[:config_build_id]
       @configuration_build = ConfigurationBuild.find(params[:config_build_id])
