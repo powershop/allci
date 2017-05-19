@@ -13,7 +13,7 @@ class BuildTaskRun < ApplicationRecord
   validates_inclusion_of :state, in: STATES
 
   def duration
-    nil unless finished_at
+    return nil unless finished_at
 
     finished_at - started_at
   end

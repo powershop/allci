@@ -48,8 +48,14 @@
               <% bootstrap_build_task_runs.each do |build_task_run| %>
                 <% classification = (build_task_run.state == 'success' ? 'success' : 'failure') %>
                 <div class="file <%= classification %>"
-                     style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;" title="<%= build_task_run.label %>">
-                     Bootstrap (<%= build_task_run.duration.to_i %>)
+                  <% if build_task_run.duration && build_task_run.relative_start(@start_time)*100/@scale_time + (build_task_run.duration*100/@scale_time) <= 100 %>
+                    style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;"
+                  <% else %>
+                    style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= 100 - (build_task_run.relative_start(@start_time)*100/@scale_time) %>%;"
+                  <% end %>
+
+                  title="<%= build_task_run.label %>">
+                  Bootstrap (<%= build_task_run.duration.to_i %>)
                 </div>
               <% end %>
             </div>
@@ -60,8 +66,13 @@
             <% spawn_build_task_runs.each do |build_task_run| %>
               <% classification = (build_task_run.state == 'success' ? 'success' : 'failure') %>
               <div class="file <%= classification %>"
-                   style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;" title="<%= build_task_run.label %>">
-                   <%= build_task_run.short_label %>
+                <% if build_task_run.duration && build_task_run.relative_start(@start_time)*100/@scale_time + (build_task_run.duration*100/@scale_time) <= 100 %>
+                   style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;"
+                 <% else %>
+                  style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= 100 - (build_task_run.relative_start(@start_time)*100/@scale_time) %>%;"
+                 <% end %>
+                 title="<%= build_task_run.label %>">
+                 <%= build_task_run.short_label %>
               </div>
             <% end %>
           </div>
@@ -71,8 +82,13 @@
             <% regular_build_task_runs.each do |build_task_run| %>
               <% classification = (build_task_run.state == 'success' ? 'success' : 'failure') %>
               <div class="file <%= classification %>"
-                   style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;" title="<%= build_task_run.label %>">
-                   <%= build_task_run.short_label %>
+                <% if build_task_run.duration && build_task_run.relative_start(@start_time)*100/@scale_time + (build_task_run.duration*100/@scale_time) <= 100 %>
+                  style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;"
+                <% else %>
+                  style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= 100 - (build_task_run.relative_start(@start_time)*100/@scale_time) %>%;"
+                <% end %>
+                title="<%= build_task_run.label %>">
+                <%= build_task_run.short_label %>
               </div>
             <% end %>
           </div>
