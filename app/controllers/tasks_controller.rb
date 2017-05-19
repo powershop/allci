@@ -5,7 +5,7 @@ class TasksController < ApplicationController
   def pull
     @task = AssignTask.new(build_id: params["build_id"].presence, stage: params["stage"].presence, runner_name: params["runner_name"]).call
     if @task
-      render json: @task
+      render json: @task.as_json
     else
       head :no_content
     end
