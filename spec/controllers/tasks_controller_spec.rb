@@ -7,13 +7,13 @@ RSpec.describe TasksController, type: :controller do
       build_task = instance_double(BuildTask)
       expect(AssignTask).to receive(:new).with(build_id: nil, stage: "bootstrap", runner_name: "foo-12:1").and_return(service)
       expect(service).to receive(:call).and_return(build_task)
-      expect(build_task).to receive(:to_json).and_return("{ foo: 'bar' }")
+      expect(build_task).to receive(:as_json).and_return({ foo: 'bar' })
 
       post :pull, params: { build_id: nil, stage: "bootstrap", runner_name: "foo-12:1" }
 
       expect(response.status).to eq(200)
       expect(response.content_type).to eq("application/json")
-      expect(response.body).to eq("{ foo: 'bar' }")
+      expect(response.body).to eq('{"foo":"bar"}')
     end
 
     it "allows multiple stages to be passed in an array" do
@@ -21,13 +21,13 @@ RSpec.describe TasksController, type: :controller do
       build_task = instance_double(BuildTask)
       expect(AssignTask).to receive(:new).with(build_id: nil, stage: %w(bootstrap spawn), runner_name: "foo-12:1").and_return(service)
       expect(service).to receive(:call).and_return(build_task)
-      expect(build_task).to receive(:to_json).and_return("{ foo: 'bar' }")
+      expect(build_task).to receive(:as_json).and_return({ foo: 'bar' })
 
       post :pull, params: { build_id: nil, stage: %w(bootstrap spawn), runner_name: "foo-12:1" }
 
       expect(response.status).to eq(200)
       expect(response.content_type).to eq("application/json")
-      expect(response.body).to eq("{ foo: 'bar' }")
+      expect(response.body).to eq('{"foo":"bar"}')
     end
 
     it "responds with the HTTP no content status if there is no task to run" do
