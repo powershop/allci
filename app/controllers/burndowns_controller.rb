@@ -22,7 +22,11 @@ class BurndownsController < ApplicationController
 
     @build_task_runs = BuildTaskRun.where(started_at: @start_time..(@start_time + @scale_time)).includes(:build_task)
 
-    @build_task_runs_by_runner = @build_task_runs.joins(:runner).order("runners.name").preload(:runner).group_by(&:runner)
+    @build_task_runs_by_runner_and_configuration_build = @build_task_runs.joins(:runner).order("runners.name").preload(:runner, :configuration_build).group_by(&:runner)
+
+    @build_task_runs_by_runner_and_configuration_build.each do |key,value|
+      @build_task_runs_by_runner_and_configuration_build[key] = value.group_by(&:configuration_build)
+    end
 
     respond_to do |format|
       format.html { render layout: false}
