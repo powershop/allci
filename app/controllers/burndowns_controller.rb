@@ -27,9 +27,5 @@ class BurndownsController < ApplicationController
     @build_task_runs_by_runner_and_configuration_build.each do |key,value|
       @build_task_runs_by_runner_and_configuration_build[key] = value.group_by(&:configuration_build)
     end
-
-    respond_to do |format|
-      format.html { render layout: false}
-    end
   end
 end
