@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :configurations
   resources :configuration_builds
   resources :build_tasks
+  resources :build_task_runs
   resource :burndowns
 
   root to: 'projects#index'

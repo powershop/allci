@@ -1,0 +1,5 @@
+<h1>Build task run <%= @build_task_run.id %></h1>
+<% @build_task_run.build_task_run_outputs.each do |build_task_run_output| %>
+  <h2><%= build_task_run_output.container_name %></h2>
+  <pre><%= build_task_run_output.output %></pre>
+<% end %>
