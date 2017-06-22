@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<title>AllCI burndown</title>
+		<style type="text/css">
+      html, body {height: 100%; min-height: 100%}
+			body { background-color: #eee; font: 9pt Helvetica, Arial, sans-serif; }
+			.runner { margin-top: 20px; }
+			.runner_label { line-height: 20px; font-weight: bold; }
+			.worker { height: 20px; position: relative; padding-left: 20px; background: white; }
+			.worker:nth-child(even) { background: #f7f7f7; }
+			.worker_label { float: left; position: absolute; top: 0px; margin-left: -20px; width: 20px; height: 20px; line-height: 20px; }
+			.framework, .file { float: left; position: absolute; top: 0px; height: 19px; line-height: 19px; border: 1px solid #ccc; border-top: none; white-space: nowrap; overflow: hidden; }
+			.file.success { background-color: #bbeebb; }
+			.file.failure { background-color: #ffcccc; }
+			.file.retried { background-color: #ffffcc; }
+			.framework { background-color: white; color: #007700; font-size: 7.5pt; font-weight: bold; }
+      .vr {
+        width: 1px;
+        background-color: #000;
+        position:fixed;
+        top:0;
+        height: 100%;
+        opacity: 0.2;
+        z-index: 999;
+      }
+		</style>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>
+
