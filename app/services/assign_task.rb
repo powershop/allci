@@ -9,20 +9,26 @@ class AssignTask
     BuildTask.transaction do
       if task_run = task_run_to_retry
         task = task_run.build_task
-        task_run.update!(state: "aborted", finished_at: Time.now) if task
+        task_run.update!(state: "aborted", finished_at: Time.now)
       elsif task = available_build_tasks.lock.take
         task.workers_to_run -= 1
         task.state = "running" if task.workers_to_run < 1
         task.save!
+      else
+        return nil
       end
-      task.build_task_runs.create!(runner: runner, started_at: Time.now) if task
+
+      task.build_task_runs.create!(runner: runner, started_at: Time.now)
+      if task.configuration_build.state == "available" && task.configuration_build.lock!.state == "available"
+        task.configuration_build.update!(state: "running")
+      end
       task
     end
   end
 
   def build_tasks
     if @build_id.nil?
-      BuildTask.joins(:configuration_build => :configuration).merge(ConfigurationBuild.available).merge(Configuration.in_build_priority_order).for_stage(@stage)
+      BuildTask.joins(:configuration_build => :configuration).merge(ConfigurationBuild.not_complete).merge(Configuration.in_build_priority_order).for_stage(@stage)
     else
       BuildTask.for_build(@build_id).for_stage(@stage)
     end

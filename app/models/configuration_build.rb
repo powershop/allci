@@ -9,9 +9,14 @@ class ConfigurationBuild < ApplicationRecord
 
   STATES = %w(available running failed success)
   STATES.each { |state| scope state, -> { where(state: state) } }
+  scope :not_complete, -> { where(state: %w(available running)) }
   validates_inclusion_of :state, in: STATES
 
   def image_name_for(component)
     "#{Registry.host_prefix}#{project.name.downcase.tr('^A-Za-z0-9_', '_')}-#{component.container_name}:build-#{id}"
+  end
+
+  def not_complete?
+    %w(available running).include?(state)
   end
 end
