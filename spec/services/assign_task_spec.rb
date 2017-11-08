@@ -30,6 +30,14 @@ RSpec.describe AssignTask do
       expect(task.build_task_runs.first.runner.name).to eq(runner_name)
     end
 
+    it "changes the build to the running state" do
+      expect(build.reload.state).to eq("available")
+
+      service.call
+
+      expect(build.reload.state).to eq("running")
+    end
+
     it "reassigns tasks that the runner was supposedly already running" do
       service.call
       task.reload

@@ -44,6 +44,22 @@ RSpec.describe CompleteTask do
         expect(task.build_task_runs.first.finished_at).not_to be_blank
         expect_output_on(task.build_task_runs.first)
       end
+
+      context "no other available tasks in the build" do
+        it "marks the build failed if any task failed" do
+          build.build_tasks.create!(stage: "dummy", workers_to_run: 1, state: "failed")
+
+          expect(service.call).to eq(task)
+
+          expect(build.reload.state).to eq("failed")
+        end
+
+        it "marks the build successful otherwise" do
+          expect(service.call).to eq(task)
+
+          expect(build.reload.state).to eq("success")
+        end
+      end
     end
 
     context "when it was a failure" do
@@ -57,6 +73,14 @@ RSpec.describe CompleteTask do
         expect(task.build_task_runs.first.state).to eq("failed")
         expect(task.build_task_runs.first.finished_at).not_to be_blank
         expect_output_on(task.build_task_runs.first)
+      end
+
+      context "no other available tasks in the build" do
+        it "marks the build failed if any task failed" do
+          expect(service.call).to eq(task)
+
+          expect(build.reload.state).to eq("failed")
+        end
       end
     end
   end

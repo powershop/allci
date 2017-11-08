@@ -11,6 +11,7 @@ class CompleteTask < StoreTaskOutput
       store_exit_codes
       update_task_run_state
       update_task_state
+      update_build_state
       task
     end
   end
@@ -39,5 +40,12 @@ protected
       end
     end
     task.save!
+  end
+
+  def update_build_state
+    if task.configuration_build.not_complete? && !task.configuration_build.build_tasks.not_complete.exists? && task.configuration_build.lock!.not_complete?
+      build_failed = task.configuration_build.build_tasks.failed.exists?
+      task.configuration_build.update!(state: build_failed ? "failed" : "success")
+    end
   end
 end

@@ -8,6 +8,7 @@ class BuildTask < ApplicationRecord
 
   STATES = %w(available running failed success)
   STATES.each { |state| scope state, -> { where(state: state) } }
+  scope :not_complete, -> { where(state: %w(available running)) }
   validates_inclusion_of :state, in: STATES
 
   def as_json(options = nil)
@@ -34,5 +35,9 @@ class BuildTask < ApplicationRecord
 
   def complete?
     %w(failed success).include?(state)
+  end
+
+  def not_complete?
+    %w(available running).include?(state)
   end
 end
