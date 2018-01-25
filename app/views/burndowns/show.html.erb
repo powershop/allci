@@ -1,69 +1,51 @@
-<% time_chunks = (@scale_time/60).to_i %>
-<% (0..time_chunks).each do |i| %>
-  <hr class="vr" style="left: <%= i * (100/time_chunks) %>%;" title="<%= i %>min">
-<% end %>
-<div><%= time_chunks %> mins scale</div>
-ConfigruationBuild <%= @configuration_build.id %> took <%= '%0.2f' % @runtime %>s.
-<% @build_task_runs_by_runner_and_configuration_build.each do |runner, build_task_run_by_configuration_build| %>
+<style>
+  body {
+    background-size: <%= 100 / ((@timeframe.max - @timeframe.min) / 60.0) %>% 400px;
+    background-image: linear-gradient(to right, rgba(200, 200, 200, 0.2) 1px, transparent 1px);
+  }
+</style>
+
+<div class="intro">
+  <h1>Burndown chart for ConfigurationBuild <%= @configuration_data[:build_id] %></h1>
+
+  <p>
+    Showing <%= '%0.1f' % ((@timeframe.max - @timeframe.min) / 60) %> mins, starting at <span data-time-utc><%= @timeframe.min.iso8601 %></span>, lines represent one minute.
+  </p>
+
+  <p>
+    Total <%= @configuration_data[:running] ? "running" : "run" %> time is for <span><%= '%0.2f' % @configuration_data[:runtime] %>s (<%= Time.at(@configuration_data[:runtime]).utc.strftime("%H:%M:%S") %>).</span>
+  </p>
+</div>
+
+<% @data.each do |runner, configs| %>
   <div class="runner">
-    <div class="runner_label">Runner <%= runner.name %></div>
-    <% build_task_run_by_configuration_build.each do |configuration_build, build_task_runs| %>
+    <div class="label">Runner <%= runner.name %></div>
 
-      <% spawn_build_task_runs, regular_build_task_runs = build_task_runs.partition { |build_task_run| build_task_run.build_task.stage == 'spawn' } %>
-      <% bootstrap_build_task_runs, regular_build_task_runs = regular_build_task_runs.partition { |build_task_run| build_task_run.build_task.stage == 'bootstrap' } %>
+    <% configs.each do |config, runner| %>
+      <div class="configuration">
+        <div class="label">ConfigurationBuild-<%= config.id %></div>
 
-      <div><b>ConfigurationBuild-<%= configuration_build.id %></b></div>
-
-      <% if bootstrap_build_task_runs.present? %>
-        <div class="worker">
-          <div class="worker_label">bootstrap</div>
-          <% bootstrap_build_task_runs.each do |build_task_run| %>
-            <% classification = (build_task_run.state == 'success' ? 'success' : 'failure') %>
-            <div class="file <%= classification %>"
-              <% if build_task_run.duration && build_task_run.relative_start(@start_time)*100/@scale_time + (build_task_run.duration*100/@scale_time) <= 100 %>
-                   style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;"
-                 <% else %>
-                     style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= 100 - (build_task_run.relative_start(@start_time)*100/@scale_time) %>%;"
-                   <% end %>
-
-title="<%= build_task_run.label %>">
-<%= link_to "Bootstrap (#{build_task_run.duration.to_i})", build_task_run, target: '_blank' %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-
-      <div class="worker">
-        <div class="worker_label">spawn</div>
-        <% spawn_build_task_runs.each do |build_task_run| %>
-          <% classification = (build_task_run.state == 'success' ? 'success' : 'failure') %>
-          <div class="file <%= classification %>"
-            <% if build_task_run.duration && build_task_run.relative_start(@start_time)*100/@scale_time + (build_task_run.duration*100/@scale_time) <= 100 %>
-              style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;"
-            <% else %>
-              style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= 100 - (build_task_run.relative_start(@start_time)*100/@scale_time) %>%;"
+        <% runner.each do |name, list| %>
+          <div class="worker">
+            <span class="worker-label"><%= name %></span>
+            <% list.each do |build_task_run| %>              
+              <% calculate_burndown_section_for(build_task_run) do |label, status, left, width| %>
+                <div class="file <%= status %>" title="<%= build_task_run.label %>" style="left: <%= left %>%; width: <%= width %>%;">
+                  <%= link_to label, build_task_run %>
+                </div>
+              <% end %>
             <% end %>
-            title="<%= build_task_run.label %>">
-            <%= link_to build_task_run.short_label, build_task_run, target: '_blank' %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="worker">
-        <div class="worker_label">run</div>
-        <% regular_build_task_runs.each do |build_task_run| %>
-          <% classification = (build_task_run.state == 'success' ? 'success' : 'failure') %>
-          <div class="file <%= classification %>"
-            <% if build_task_run.duration && build_task_run.relative_start(@start_time)*100/@scale_time + (build_task_run.duration*100/@scale_time) <= 100 %>
-              style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= '%0.2f' % (build_task_run.duration*100/@scale_time) %>%;"
-            <% else %>
-              style="left: <%= '%0.2f' % (build_task_run.relative_start(@start_time)*100/@scale_time) %>%; width: <%= 100 - (build_task_run.relative_start(@start_time)*100/@scale_time) %>%;"
-            <% end %>
-            title="<%= build_task_run.label %>">
-            <%= link_to build_task_run.short_label, build_task_run, target: '_blank' %>
           </div>
         <% end %>
       </div>
     <% end %>
   </div>
 <% end %>
+
+<script>
+  [].forEach.call(document.querySelectorAll("[data-time-utc]"), function(el) {
+    let time = new Date(el.innerText);
+    el.title = el.innerText;
+    el.innerText = time.toString();
+  });
+</script>

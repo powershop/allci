@@ -3,25 +3,55 @@
 		<title>AllCI burndown</title>
 		<style type="text/css">
       html, body {height: 100%; min-height: 100%}
-			body { background-color: #eee; font: 9pt Helvetica, Arial, sans-serif; }
-			.runner { margin-top: 20px; }
-			.runner_label { line-height: 20px; font-weight: bold; }
-			.worker { height: 20px; position: relative; padding-left: 20px; background: white; }
-			.worker:nth-child(even) { background: #f7f7f7; }
-			.worker_label { float: left; position: absolute; top: 0px; margin-left: -20px; width: 20px; height: 20px; line-height: 20px; }
-			.framework, .file { float: left; position: absolute; top: 0px; height: 19px; line-height: 19px; border: 1px solid #ccc; border-top: none; white-space: nowrap; overflow: hidden; }
+			body { background-color: #fafafa; font: 10pt Helvetica, Arial, sans-serif; margin: 0; }
+			.runner { margin-bottom: 40px; }
+			.worker { height: 20px; position: relative; }
+			.worker:nth-child(even) { background: rgba(220, 220, 220, 0.3); }
+      .worker > span { line-height: 20px; padding-left: 5px; }
+			.framework, .file { position: absolute; top: 0px; height: 19px; line-height: 19px; border: 1px solid #ccc; border-top: none; white-space: nowrap; overflow: hidden; }
+
+      .framework, .file > div {
+        background: red;
+        border: 1px solid black;
+        float: left;
+        position: absolute;
+      }
+
+      .intro {
+        background: #1c1c1c;
+        color: #fafafa;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+      }
+
+      .label {
+        color: #fafafa;
+        padding: 4px;
+        border-radius: 3px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        display: inline-block;
+        /*margin: 4px;*/
+        box-sizing: border-box;
+      }
+
+      .runner > .label {
+        font-size: 1.2em;
+        background: #5F259F;
+      }
+
+      .configuration > .label {
+        font-size: 1.0em;
+        background: #F04E98;
+      }
 			.file.success { background-color: #bbeebb; }
 			.file.failure { background-color: #ffcccc; }
 			.file.retried { background-color: #ffffcc; }
 			.framework { background-color: white; color: #007700; font-size: 7.5pt; font-weight: bold; }
-      .vr {
-        width: 1px;
-        background-color: #000;
-        position:fixed;
-        top:0;
-        height: 100%;
-        opacity: 0.2;
-        z-index: 999;
+
+      .label + .configuration > .label {
+        border-top-right-radius: 0;
       }
 		</style>
   </head>

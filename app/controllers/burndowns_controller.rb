@@ -2,30 +2,52 @@ class BurndownsController < ApplicationController
   skip_before_action :authenticate_user!
 
   def show
-    if params[:config_build_id]
-      @configuration_build = ConfigurationBuild.find(params[:config_build_id])
-    else
-      @configuration_build = ConfigurationBuild.last
+    start_time = build_task_runs.minimum(:started_at)
+    end_time   = build_task_runs.maximum(:finished_at)
+
+    runtime = (end_time || Time.now) - start_time
+    @configuration_data = { running: end_time.nil?, runtime: runtime, build_id: @configuration_build_id }
+
+    duration = params[:scale] ? params[:scale].to_d.minutes : runtime
+
+    @timeframe = start_time..(start_time + duration)
+
+    runs_by_runner_and_config = BuildTaskRun.
+      where(started_at: @timeframe).
+      order("runners.name").
+      left_joins(:runner, :configuration_build, :build_task).
+      select('build_task_runs.*, build_tasks.stage AS inferred_stage').
+      includes(:runner, :configuration_build)
+
+    puts "len calc"
+    puts (Benchmark.ms do
+      puts "len: #{runs_by_runner_and_config.to_a.length}"
+    end)
+
+    puts "group_by calc"
+    puts (Benchmark.ms do
+      runs_by_runner_and_config = runs_by_runner_and_config.group_by { |run| [run.runner, run.configuration_build] }
+    end)
+
+    @data = {}
+    runs_by_runner_and_config.each do |(runner, config), runs|
+      runs_by_stage = runs.group_by do |run|
+        run.inferred_stage
+      end
+
+      @data[runner] ||= {}
+      @data[runner][config] = runs_by_stage
     end
-    @start_time = @configuration_build.build_task_runs.order(:started_at).first.started_at
-    end_time = @configuration_build.build_task_runs.order(:finished_at).last.finished_at
+  end
 
-    @runtime = end_time - @start_time
+  private
 
-    scale = if params[:scale]
-              params[:scale].to_d.minutes
-            else
-              ((@runtime/60) + 1).to_i.minutes
-            end
+  def build_task_runs
+    return @build_task_runs if @build_task_runs
 
-    @scale_time = scale
+    build = params[:config_build_id] ? ConfigurationBuild.find(params[:config_build_id]) : ConfigurationBuild.last
 
-    @build_task_runs = BuildTaskRun.where(started_at: @start_time..(@start_time + @scale_time)).includes(:build_task)
-
-    @build_task_runs_by_runner_and_configuration_build = @build_task_runs.joins(:runner).order("runners.name").preload(:runner, :configuration_build).group_by(&:runner)
-
-    @build_task_runs_by_runner_and_configuration_build.each do |key,value|
-      @build_task_runs_by_runner_and_configuration_build[key] = value.group_by(&:configuration_build)
-    end
+    @configuration_build_id = build.id
+    @build_task_runs = build.build_task_runs
   end
 end
