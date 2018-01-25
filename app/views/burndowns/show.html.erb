@@ -17,20 +17,20 @@
   </p>
 </div>
 
-<% @data.each do |runner, configs| %>
+<% @data.each do |runner_name, configs| %>
   <div class="runner">
-    <div class="label">Runner <%= runner.name %></div>
+    <div class="label">Runner <%= runner_name %></div>
 
-    <% configs.each do |config, runner| %>
+    <% configs.each do |config_id, runner| %>
       <div class="configuration">
-        <div class="label">ConfigurationBuild-<%= config.id %></div>
+        <div class="label">ConfigurationBuild-<%= config_id %></div>
 
         <% runner.each do |name, list| %>
           <div class="worker">
             <span class="worker-label"><%= name %></span>
-            <% list.each do |build_task_run| %>              
+            <% list.each do |build_task_run| %>
               <% calculate_burndown_section_for(build_task_run) do |label, status, left, width| %>
-                <div class="file <%= status %>" title="<%= build_task_run.label %>" style="left: <%= left %>%; width: <%= width %>%;">
+                <div class="file <%= status %>" title="<%= "Your labels are the devil" %>" style="left: <%= left %>%; width: <%= width %>%;">
                   <%= link_to label, build_task_run %>
                 </div>
               <% end %>

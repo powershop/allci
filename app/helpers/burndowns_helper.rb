@@ -2,10 +2,10 @@ module BurndownsHelper
   def calculate_burndown_section_for(build_task_run)
     status = (build_task_run.state == 'success' ? 'success' : 'failure')
 
-    label = if build_task_run.build_task.stage == "bootstrap"
+    label = if build_task_run.inferred_stage == "bootstrap"
       "Bootstrap (#{build_task_run.duration.to_i})"
     else
-      build_task_run.short_label
+      "less slow this way!"#build_task_run.short_label
     end
 
     scale_time = @timeframe.max - @timeframe.min

@@ -16,18 +16,8 @@ class BurndownsController < ApplicationController
       where(started_at: @timeframe).
       order("runners.name").
       left_joins(:runner, :configuration_build, :build_task).
-      select('build_task_runs.*, build_tasks.stage AS inferred_stage').
-      includes(:runner, :configuration_build)
-
-    puts "len calc"
-    puts (Benchmark.ms do
-      puts "len: #{runs_by_runner_and_config.to_a.length}"
-    end)
-
-    puts "group_by calc"
-    puts (Benchmark.ms do
-      runs_by_runner_and_config = runs_by_runner_and_config.group_by { |run| [run.runner, run.configuration_build] }
-    end)
+      select('build_task_runs.*, build_tasks.stage AS inferred_stage, runners.name AS inferred_runner_name, configuration_builds.id AS configuration_build_id').
+      group_by { |run| [run.inferred_runner_name, run.configuration_build_id] }
 
     @data = {}
     runs_by_runner_and_config.each do |(runner, config), runs|
