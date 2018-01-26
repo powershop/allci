@@ -5,7 +5,7 @@ module BurndownsHelper
     label = if build_task_run.stage == "bootstrap"
       "Bootstrap (#{build_task_run.duration.to_i})"
     else
-      "less slow this way!"#build_task_run.short_label
+      build_task_run.short_label
     end
 
     scale_time = @timeframe.max - @timeframe.min
