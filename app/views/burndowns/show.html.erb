@@ -30,8 +30,8 @@
             <span class="worker-label"><%= name %></span>
             <% list.each do |build_task_run| %>
               <% calculate_burndown_section_for(build_task_run) do |label, status, left, width| %>
-                <div class="file <%= status %>" title="<%= "Your labels are the devil" %>" style="left: <%= left %>%; width: <%= width %>%;">
-                  "Link goes here"
+                <div class="file <%= status %>" title="<%= build_task_run.label %>" style="left: <%= left %>%; width: <%= width %>%;">
+                  <%= link_to label, controller: 'build_task_runs', action: 'show', id: build_task_run.id %>
                 </div>
               <% end %>
             <% end %>
