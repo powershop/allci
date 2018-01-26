@@ -31,7 +31,7 @@
             <% list.each do |build_task_run| %>
               <% calculate_burndown_section_for(build_task_run) do |label, status, left, width| %>
                 <div class="file <%= status %>" title="<%= "Your labels are the devil" %>" style="left: <%= left %>%; width: <%= width %>%;">
-                  <%= link_to label, build_task_run %>
+                  "Link goes here"
                 </div>
               <% end %>
             <% end %>

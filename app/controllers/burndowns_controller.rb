@@ -14,16 +14,17 @@ class BurndownsController < ApplicationController
 
     runs_by_runner_and_config = BuildTaskRun.
       where(started_at: @timeframe).
-      order("runners.name").
       left_joins(:runner, :configuration_build, :build_task).
-      select('build_task_runs.*, build_tasks.stage AS inferred_stage, runners.name AS inferred_runner_name, configuration_builds.id AS configuration_build_id').
-      group_by { |run| [run.inferred_runner_name, run.configuration_build_id] }
+      select('build_task_runs.*, build_tasks.stage AS inferred_stage, runners.name AS inferred_runner_name, configuration_builds.id AS configuration_build_id')
+
+    # puts "time to load: #{Benchmark.ms { runs_by_runner_and_config.length }}"
+    # puts "time to group: #{Benchmark.ms { runs_by_runner_and_config = runs_by_runner_and_config.group_by { |run| [run.inferred_runner_name, run.configuration_build_id] } }}"
+
+    runs_by_runner_and_config = Projected.burndown_rows_for_timeframe(@timeframe).group_by { |run| [run.name, run.configuration_build_id] }
 
     @data = {}
     runs_by_runner_and_config.each do |(runner, config), runs|
-      runs_by_stage = runs.group_by do |run|
-        run.inferred_stage
-      end
+      runs_by_stage = runs.group_by(&:stage)
 
       @data[runner] ||= {}
       @data[runner][config] = runs_by_stage
@@ -39,5 +40,40 @@ class BurndownsController < ApplicationController
 
     @configuration_build_id = build.id
     @build_task_runs = build.build_task_runs
+  end
+
+  class Projected
+    PROJECTION = [
+      %i[build_task_runs      finished_at],
+      %i[build_task_runs      started_at],
+      %i[build_task_runs      state ],
+      %i[build_tasks          stage        ],
+      %i[runners              name    ],
+      %i[configuration_builds id    configuration_build_id]
+    ]
+
+    def self.burndown_rows_for_timeframe(timeframe)
+      retrieved_columns  = PROJECTION.map { |table, column, _| "`#{table}`.`#{column}`" }
+
+      raw_data = BuildTaskRun.
+        where(started_at: timeframe).
+        left_joins(:runner, :configuration_build, :build_task).
+        order('runners.name').
+        pluck(*retrieved_columns)
+
+      raw_data.map { |row| BurndownRow.new(*row) }
+    end
+
+    BurndownRow = Struct.new(*PROJECTION.map(&:last)) do
+      def duration
+        return nil unless finished_at
+
+        finished_at - started_at
+      end
+
+      def relative_start(start_time_of_build)
+        started_at - start_time_of_build
+      end
+    end
   end
 end
