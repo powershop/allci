@@ -1,6 +1,6 @@
 module BurndownsHelper
   def calculate_burndown_section_for(build_task_run)
-    status = (build_task_run.state == 'success' ? 'success' : 'failure')
+    status = build_task_run.state.to_s
 
     label = if build_task_run.stage == "bootstrap"
       "Bootstrap (#{build_task_run.duration.to_i})"
