@@ -11,7 +11,11 @@
     <p class="alert"><%= alert %></p>
 
     <% unless current_user %>
-      <%= link_to "Sign in as Developer", user_developer_omniauth_authorize_path %>
+      <% if Rails.env.production? %>
+        <%= link_to "Sign in using Google", user_google_oauth2_omniauth_authorize_path %>
+      <% else %>
+        <%= link_to "Sign in as Developer", user_developer_omniauth_authorize_path %>
+      <% end %>
     <% else %>
       <%= javascript_include_tag 'application' %>
     <% end %>
