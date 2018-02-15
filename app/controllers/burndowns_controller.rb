@@ -1,6 +1,4 @@
 class BurndownsController < ApplicationController
-  skip_before_action :authenticate_user!
-
   def show
     start_time = build_task_runs.minimum(:started_at)
     end_time   = build_task_runs.maximum(:finished_at)
