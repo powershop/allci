@@ -26,7 +26,7 @@ class BurndownsController < ApplicationController
   def build_task_runs
     return @build_task_runs if @build_task_runs
 
-    build = params[:config_build_id] ? ConfigurationBuild.find(params[:config_build_id]) : ConfigurationBuild.last
+    build = params[:config_build_id] ? ConfigurationBuild.find(params[:config_build_id]) : ConfigurationBuild.where("state <> 'available'").last
 
     @configuration_build_id = build.id
     @build_task_runs = build.build_task_runs
