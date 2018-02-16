@@ -8,21 +8,20 @@ module BurndownsHelper
       build_task_run.short_label
     end
 
-    scale_time = @timeframe.max - @timeframe.min
-    scaling_factor = 100.0 / scale_time
+    scaling_factor = 100.0 / @scale_time
 
-    left  = build_task_run.relative_start(@timeframe.min) * scaling_factor
+    left  = build_task_run.relative_start * scaling_factor
 
     width = if build_task_run.duration && fits(build_task_run, scaling_factor)
       build_task_run.duration * scaling_factor
     else
-      100 - ( build_task_run.relative_start(@timeframe.min) * scaling_factor )
+      100 - ( build_task_run.relative_start * scaling_factor )
     end
 
     yield(label, status, left, width)
   end
 
   def fits(build_task_run, scaling_factor)
-    build_task_run.relative_start(@timeframe.min) * scaling_factor + (build_task_run.duration*scaling_factor) <= 100
+    build_task_run.relative_start + build_task_run.duration <= 100.0 / scaling_factor
   end
 end

@@ -1,7 +1,11 @@
 class BurndownsController < ApplicationController
   def show
-    start_time = build_task_runs.minimum(:started_at)
-    end_time   = build_task_runs.maximum(:finished_at)
+    build = params[:config_build_id] ? ConfigurationBuild.find(params[:config_build_id]) : ConfigurationBuild.last
+    start_time = build.build_task_runs.minimum(:started_at)
+    end_time   = build.build_task_runs.maximum(:finished_at)
+
+    @build_task_runs = build.build_task_runs
+    @configuration_build_id = build.id
 
     runtime = (end_time || Time.now) - start_time
     @configuration_data = { running: end_time.nil?, runtime: runtime, build_id: @configuration_build_id }
@@ -9,8 +13,9 @@ class BurndownsController < ApplicationController
     duration = params[:scale] ? params[:scale].to_d.minutes : runtime
 
     @timeframe = start_time..(start_time + duration)
+    @scale_time = @timeframe.max - @timeframe.min
 
-    runs_by_runner_and_config = Projected.burndown_rows_for_timeframe(@timeframe).group_by { |run| [run.name, run.configuration_build_id] }
+    runs_by_runner_and_config = Projected.burndown_rows_for_timeframe(build, @timeframe).group_by { |run| [run.name, run.configuration_build_id] }
 
     @data = {}
     runs_by_runner_and_config.each do |(runner, config), runs|
@@ -23,50 +28,50 @@ class BurndownsController < ApplicationController
 
   private
 
-  def build_task_runs
-    return @build_task_runs if @build_task_runs
-
-    build = params[:config_build_id] ? ConfigurationBuild.find(params[:config_build_id]) : ConfigurationBuild.last
-
-    @configuration_build_id = build.id
-    @build_task_runs = build.build_task_runs
-  end
-
   class Projected
-    PROJECTION = [
-      %i[build_task_runs      id         ],
-      %i[build_task_runs      started_at ],
-      %i[build_task_runs      finished_at],
-      %i[build_task_runs      state      ],
-      %i[build_tasks          stage      ],
-      %i[build_tasks          task       ],
-      %i[runners              name       ],
-      %i[configuration_builds id         configuration_build_id]
-    ]
+    def self.burndown_rows_for_timeframe(framing_config, timeframe)
+      earliest_start = framing_config.build_task_runs.minimum(:started_at)
 
-    def self.burndown_rows_for_timeframe(timeframe)
-      retrieved_columns  = PROJECTION.map { |table, column, _| "`#{table}`.`#{column}`" }
+      runs    = BuildTaskRun.arel_table
+      builds  = ConfigurationBuild.arel_table
+      runners = Runner.arel_table
+
+      build_alias = builds[:id].as('configuration_build_id')
+      duration_alias = Arel::Nodes::NamedFunction.new(
+        'TIMESTAMPDIFF',
+        [
+          Arel::Nodes::SqlLiteral.new('SECOND'),
+          runs[:started_at],
+          runs[:finished_at]
+        ]
+      ).as('duration')
+      relative_start = Arel::Nodes::NamedFunction.new(
+        'TIMESTAMPDIFF',
+        [
+          Arel::Nodes::SqlLiteral.new('SECOND'),
+          Arel::Nodes::Quoted.new(earliest_start),
+          runs[:started_at],
+        ]
+      )
+      string_start = Arel::Nodes::NamedFunction.new(
+        'CAST',
+        [
+          runs[:started_at].as('CHAR')
+        ]
+      ).as('raw_started_at')
+
+      pluckables = [ :id, duration_alias, :state, :stage, :task, :name, build_alias, relative_start, string_start ] # aligned with struct definition
 
       raw_data = BuildTaskRun.
         where(started_at: timeframe).
-        left_joins(:runner, :configuration_build, :build_task).
-        order('runners.name').
-        pluck(*retrieved_columns)
+        left_joins(:runner, {build_task: :configuration_build}).
+        order(runners[:name]).
+        pluck(*pluckables)
 
       raw_data.map { |row| BurndownRow.new(*row) }
     end
 
-    BurndownRow = Struct.new(*PROJECTION.map(&:last)) do
-      def duration
-        return nil unless finished_at
-
-        finished_at - started_at
-      end
-
-      def relative_start(start_time_of_build)
-        started_at - start_time_of_build
-      end
-
+    BurndownRow = Struct.new(:id, :duration, :state, :stage, :task, :name, :configuration_build_id, :relative_start, :started_at) do
       def label
         lead     = task&.split(' ')&.last
         duration = "(#{duration.to_i}s - #{started_at})" + " - ID #{id}"
